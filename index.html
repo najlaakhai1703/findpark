@@ -1,0 +1,2648 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FindPark - Smart Parking Solutions | Prototype Website</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#008874',
+              dark: '#006c5c',
+              light: '#e6f6f3',
+              accent: '#fa5a00',
+              accentHover: '#e04f00'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Leaflet CSS for Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-[#f8fafc] text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- TOP NAVIGATION BAR (Clean, Spacious & Responsive) -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 gap-3 xl:gap-6">
+        
+        <!-- Left: Logo & City & Search -->
+        <div class="flex items-center gap-2.5 sm:gap-4 shrink-0">
+          <!-- Official Logo Provided by User -->
+          <div onclick="navigateTo('page-home')" class="cursor-pointer flex items-center shrink-0 group">
+            <img src="assets/images/logo-cropped.jpg" alt="FindPark - FAST TRACKER AREA" class="h-10 sm:h-11 w-auto object-contain group-hover:scale-105 transition" />
+          </div>
+
+          <!-- City Selector -->
+          <button class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 transition shrink-0">
+            <i class="fa-solid fa-location-dot text-[#008874]"></i>
+            <span>Semarang</span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+          </button>
+
+          <!-- Clean Search Bar -->
+          <div class="relative w-44 sm:w-56 xl:w-64">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+            <input id="navbar-search-input" type="text" placeholder="Cari mall, gedung..." onkeydown="if(event.key === 'Enter') handleNavbarSearch()" class="w-full pl-9 pr-3 py-2 bg-slate-100/90 hover:bg-slate-100 focus:bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#008874] transition" />
+          </div>
+        </div>
+
+        <!-- Center: Primary Navigation Links & Layanan Dropdown -->
+        <nav class="hidden md:flex items-center gap-1 shrink-0">
+          <button data-target="page-home" onclick="navigateTo('page-home')" class="nav-link-btn px-3 py-2 rounded-xl text-xs font-bold bg-[#008874] text-white shadow-sm transition shrink-0">
+            Beranda
+          </button>
+          <button data-target="page-explore" onclick="navigateTo('page-explore')" class="nav-link-btn px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-[#008874] hover:bg-slate-100 transition shrink-0">
+            Cari Parkir
+          </button>
+          <button data-target="page-booking" onclick="navigateTo('page-booking')" class="nav-link-btn px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-[#008874] hover:bg-slate-100 transition shrink-0">
+            Booking
+          </button>
+          <button data-target="page-payment" onclick="navigateTo('page-payment')" class="nav-link-btn px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-[#008874] hover:bg-slate-100 transition flex items-center gap-1 shrink-0">
+            <span>Pembayaran</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+          </button>
+          
+          <!-- Dropdown Fitur & Layanan Lainnya -->
+          <div class="relative group">
+            <button id="nav-services-dropdown-btn" class="px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-[#008874] hover:bg-slate-100 transition flex items-center gap-1.5 cursor-pointer shrink-0">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 sensor-live-indicator"></span>
+              <span>Layanan Lainnya</span>
+              <i class="fa-solid fa-chevron-down text-[9px] text-slate-400 group-hover:rotate-180 transition-transform"></i>
+            </button>
+            <div class="hidden group-hover:block hover:block absolute left-0 top-full pt-2 w-64 z-50">
+              <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-2 space-y-1 animate-fade-in">
+                <button onclick="navigateTo('page-tracker')" class="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-teal-50 text-left transition group/item">
+                  <div class="w-8 h-8 rounded-lg bg-teal-100 text-[#008874] flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                  </div>
+                  <div>
+                    <span class="block text-xs font-bold text-slate-900 group-hover/item:text-[#008874]">Find My Car</span>
+                    <span class="block text-[10px] text-slate-500">Radar & Pelacak Tiang Parkir</span>
+                  </div>
+                </button>
+                <button onclick="navigateTo('page-subscription')" class="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-teal-50 text-left transition group/item">
+                  <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-xs">
+                    <i class="fa-regular fa-id-card"></i>
+                  </div>
+                  <div>
+                    <span class="block text-xs font-bold text-slate-900 group-hover/item:text-[#008874]">Langganan Pass</span>
+                    <span class="block text-[10px] text-slate-500">Paket Bulanan Hemat All-Mall</span>
+                  </div>
+                </button>
+                <button onclick="navigateTo('page-ev')" class="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-teal-50 text-left transition group/item">
+                  <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-charging-station"></i>
+                  </div>
+                  <div>
+                    <span class="block text-xs font-bold text-slate-900 group-hover/item:text-[#008874]">EV Charging</span>
+                    <span class="block text-[10px] text-slate-500">Stasiun Pengisian Mobil Listrik</span>
+                  </div>
+                </button>
+                <button onclick="navigateTo('page-history')" class="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-teal-50 text-left transition group/item">
+                  <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                  </div>
+                  <div>
+                    <span class="block text-xs font-bold text-slate-900 group-hover/item:text-[#008874]">Riwayat Transaksi</span>
+                    <span class="block text-[10px] text-slate-500">Bukti bayar & tiket aktif</span>
+                  </div>
+                </button>
+                <div class="border-t border-slate-100 my-1"></div>
+                <button onclick="navigateTo('page-emergency')" class="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-red-50 text-left transition group/item">
+                  <div class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-truck-medical"></i>
+                  </div>
+                  <div>
+                    <span class="block text-xs font-bold text-red-700">Bantuan Darurat SOS</span>
+                    <span class="block text-[10px] text-slate-500">Jumper aki, ban & CS 24 Jam</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Right: Active Vehicle Badge & Profile (No Wrapping, 100% Neat) -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <!-- Active Vehicle Pill -->
+          <button onclick="openAddVehicleModal()" class="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl bg-orange-50 border border-orange-200 hover:bg-orange-100 transition whitespace-nowrap shrink-0" title="Klik untuk ganti atau tambah kendaraan">
+            <div class="w-6 h-6 rounded-lg bg-orange-500 text-white flex items-center justify-center text-xs">
+              <i class="fa-solid fa-car"></i>
+            </div>
+            <div class="text-left leading-tight">
+              <span class="block text-[8px] font-bold text-orange-600 uppercase">Kendaraan Aktif</span>
+              <span id="header-active-vehicle-plate" class="text-xs font-black text-slate-900 font-mono tracking-wider">B 1256 AY</span>
+            </div>
+          </button>
+
+          <!-- Notification Bell -->
+          <button class="relative w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center transition shrink-0">
+            <i class="fa-regular fa-bell text-sm"></i>
+            <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-orange-500 ring-2 ring-white"></span>
+          </button>
+
+          <!-- User Avatar & Balance (Clean 2-line layout, NO WRAPPING!) -->
+          <div onclick="openAuthModal()" class="flex items-center gap-2 sm:gap-2.5 cursor-pointer p-1 rounded-xl hover:bg-slate-50 transition shrink-0">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Angelica Prameswari" class="w-9 h-9 rounded-full object-cover ring-2 ring-teal-600/30 shrink-0">
+            <div class="text-left leading-tight whitespace-nowrap">
+              <div class="flex items-center gap-1">
+                <span class="text-xs font-bold text-slate-900">Angelica Prameswari</span>
+                <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+              </div>
+              <span id="header-user-saldo" class="text-[11px] font-semibold text-emerald-600 block mt-0.5">Saldo: Rp 150.000 (GoPay)</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APPLICATION CONTENT CONTAINER -->
+  <main class="flex-1">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: BERANDA / HOME (FIGMA IMAGE 2)     -->
+    <!-- ========================================== -->
+    <div id="page-home" class="hidden">
+      <!-- Hero Section -->
+      <section class="relative pt-10 pb-16 overflow-hidden bg-gradient-to-b from-teal-50/60 via-slate-50/40 to-[#f8fafc]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-100 text-[#008874] text-xs font-extrabold tracking-wide uppercase mb-4">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Smart Urban Mobility 4.0</span>
+              </div>
+              <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                Solusi Parkir Pintar Tanpa Ribet Keliling Cari Slot
+              </h1>
+              <p class="mt-4 text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl">
+                Cari, pesan tempat parkir eksklusif secara real-time, bayar non-tunai, dan nikmati akses palang otomatis di mall & gedung ternama di Indonesia.
+              </p>
+
+              <!-- Stats Highlights -->
+              <div class="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-slate-200/80 max-w-lg">
+                <div>
+                  <span class="block text-2xl sm:text-3xl font-black text-slate-900">98%</span>
+                  <span class="text-xs text-slate-500 font-medium">Slot Tergaransi</span>
+                </div>
+                <div>
+                  <span class="block text-2xl sm:text-3xl font-black text-slate-900">150+</span>
+                  <span class="text-xs text-slate-500 font-medium">Gedung Rekanan</span>
+                </div>
+                <div>
+                  <span class="block text-2xl sm:text-3xl font-black text-slate-900">3 Detik</span>
+                  <span class="text-xs text-slate-500 font-medium">Akses Palang Otomatis</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Hero Right Live Monitor Widget -->
+            <div class="lg:col-span-5">
+              <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-100 relative overflow-hidden">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span class="text-xs font-bold text-slate-800">Live Monitor • Semarang Mall Cluster</span>
+                  </div>
+                  <span class="text-[10px] text-slate-400">Pembaruan 12 ms lalu</span>
+                </div>
+
+                <div class="mt-4 bg-slate-900 rounded-2xl p-4 text-white relative">
+                  <div class="flex justify-between items-start mb-3">
+                    <div>
+                      <span class="text-[10px] uppercase tracking-wider text-teal-400 font-bold">Slot Terpilih Real-Time</span>
+                      <h4 class="text-lg font-black text-white">DP Mall Semarang – G3</h4>
+                      <p class="text-xs text-slate-400">Lantai G3, Area B (Lobby XXI)</p>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-emerald-400 sensor-live-indicator"></span>
+                      Slot G-14 Terkunci
+                    </span>
+                  </div>
+
+                  <div class="bg-slate-800/80 rounded-xl p-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-car"></i>
+                      </div>
+                      <div>
+                        <span class="block text-[10px] text-slate-400">Kendaraan Terpilih</span>
+                        <span class="text-xs font-bold font-mono text-white">B 1256 AY</span>
+                      </div>
+                    </div>
+                    <span class="text-[10px] font-bold text-teal-300 bg-teal-900/60 px-2 py-1 rounded">
+                      AUTO-PASS AKTIF
+                    </span>
+                  </div>
+                </div>
+
+                <div class="mt-4 grid grid-cols-2 gap-3">
+                  <button onclick="bookThisSpot('dp-mall-g3')" class="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl shadow-md transition text-center">
+                    Reservasi Cepat Sekarang
+                  </button>
+                  <button onclick="navigateTo('page-explore')" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition text-center">
+                    Cek Semua Peta Slot
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Search Filter Box (Figma Style - Symmetrical & Perfectly Aligned) -->
+          <div class="mt-10 bg-white rounded-2xl p-4 sm:p-5 shadow-lg border border-slate-200">
+            <form onsubmit="handleHeroSearch(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+              
+              <!-- Kota Tujuan -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                  <i class="fa-solid fa-map-pin text-[#008874]"></i> Kota Tujuan
+                </label>
+                <select id="hero-search-city" class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#008874] focus:bg-white transition">
+                  <option selected value="Semarang">Semarang</option>
+                  <option value="Jakarta">Jakarta</option>
+                  <option value="Bandung">Bandung</option>
+                  <option value="Surabaya">Surabaya</option>
+                </select>
+              </div>
+
+              <!-- Nama Mall / Gedung -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                  <i class="fa-regular fa-building text-[#008874]"></i> Nama Mall / Gedung
+                </label>
+                <div class="relative">
+                  <input id="hero-search-mall" type="text" value="DP Mall Semarang" placeholder="Ketik nama mall..." class="w-full h-11 pl-3.5 pr-8 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-[#008874] focus:bg-white transition" />
+                  <button type="button" onclick="document.getElementById('hero-search-mall').value=''; document.getElementById('hero-search-mall').focus();" class="absolute right-2.5 top-3 text-slate-400 hover:text-slate-600 text-xs cursor-pointer" title="Hapus teks">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Kendaraan Toggle -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                  <i class="fa-solid fa-car-side text-[#008874]"></i> Kendaraan
+                </label>
+                <div class="flex h-11 bg-slate-100 p-1 rounded-xl items-center">
+                  <button type="button" id="hero-veh-mobil" onclick="setHeroVehicle('Mobil')" class="flex-1 h-full text-xs font-bold bg-white text-slate-900 rounded-lg shadow-xs transition flex items-center justify-center gap-1 cursor-pointer">
+                    <i class="fa-solid fa-car text-[10px] text-[#008874]"></i> Mobil
+                  </button>
+                  <button type="button" id="hero-veh-motor" onclick="setHeroVehicle('Motor')" class="flex-1 h-full text-xs font-semibold text-slate-500 hover:text-slate-900 rounded-lg transition flex items-center justify-center gap-1 cursor-pointer">
+                    <i class="fa-solid fa-motorcycle text-[10px]"></i> Motor
+                  </button>
+                </div>
+              </div>
+
+              <!-- Jam Tiba -->
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                  <i class="fa-regular fa-clock text-[#008874]"></i> Jam Tiba
+                </label>
+                <input id="hero-search-time" type="time" value="13:00" class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#008874] focus:bg-white transition" />
+              </div>
+
+              <!-- CTA Button (Aligned perfectly with exact h-11 matching inputs!) -->
+              <div class="sm:col-span-2 lg:col-span-1">
+                <label class="hidden lg:block text-[11px] font-bold text-transparent select-none mb-1.5">Aksi</label>
+                <button type="submit" id="btn-hero-search" class="w-full h-11 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-black text-xs rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer group">
+                  <i class="fa-solid fa-magnifying-glass group-hover:scale-110 transition-transform"></i>
+                  <span>Cari Slot Sekarang</span>
+                </button>
+              </div>
+
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section: Pilihan Slot Parkir Populer Semarang -->
+      <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <span class="text-xs font-extrabold text-orange-600 uppercase tracking-wider">Rekomendasi Terdekat</span>
+              <h2 class="text-2xl font-black text-slate-900 mt-1">Pilihan Slot Parkir Populer Semarang</h2>
+            </div>
+            <button onclick="navigateTo('page-explore')" class="text-xs font-bold text-[#008874] hover:underline flex items-center gap-1">
+              Lihat Semua 36 Lokasi <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            </button>
+          </div>
+
+          <!-- 4 Cards Grid from Image 2 -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            
+            <!-- Card 1: DP Mall -->
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition group">
+              <div class="relative h-40 bg-slate-100 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80" alt="DP Mall" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                <span class="absolute top-2.5 left-2.5 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
+                  42 Slot Kosong
+                </span>
+                <span class="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur text-white text-[10px] font-semibold px-2 py-0.5 rounded">
+                  Buka s/d 22:00
+                </span>
+              </div>
+              <div class="p-4">
+                <h3 class="font-bold text-slate-900 text-base">DP Mall Semarang – G3</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Jl. Pemuda No.150, Sekayu, Semarang</p>
+                <div class="mt-3 flex items-center justify-between">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Tarif Mulai</span>
+                    <span class="text-base font-black text-slate-900">Rp 5.000<span class="text-xs font-normal text-slate-500">/jam</span></span>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-teal-50 text-teal-700">Tersedia Slot G3</span>
+                </div>
+                <button onclick="bookThisSpot('dp-mall-g3')" class="w-full mt-4 py-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold text-xs rounded-xl transition text-center shadow-xs">
+                  Pesan Cepat
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 2: The Park Mall -->
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition group">
+              <div class="relative h-40 bg-slate-100 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=800&auto=format&fit=crop&q=80" alt="The Park Mall" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                <span class="absolute top-2.5 left-2.5 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
+                  38 Slot Kosong
+                </span>
+                <span class="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur text-white text-[10px] font-semibold px-2 py-0.5 rounded">
+                  Buka 24 Jam
+                </span>
+              </div>
+              <div class="p-4">
+                <h3 class="font-bold text-slate-900 text-base">The Park Mall – A34</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Jl. Madukoro Raya No.10, Semarang</p>
+                <div class="mt-3 flex items-center justify-between">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Tarif Mulai</span>
+                    <span class="text-base font-black text-slate-900">Rp 5.000<span class="text-xs font-normal text-slate-500">/jam</span></span>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">Area VIP Dekat Lobi</span>
+                </div>
+                <button onclick="bookThisSpot('the-park-a34')" class="w-full mt-4 py-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold text-xs rounded-xl transition text-center shadow-xs">
+                  Pesan Cepat
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 3: Pollux Mall Paragon -->
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition group">
+              <div class="relative h-40 bg-slate-100 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=800&auto=format&fit=crop&q=80" alt="Pollux Paragon" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                <span class="absolute top-2.5 left-2.5 bg-amber-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
+                  Cepat Penuh (7 Sisa)
+                </span>
+                <span class="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur text-white text-[10px] font-semibold px-2 py-0.5 rounded">
+                  Buka s/d 22:00
+                </span>
+              </div>
+              <div class="p-4">
+                <h3 class="font-bold text-slate-900 text-base">Pollux Mall Paragon – A6</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Jl. Pemuda No.118, Sekayu, Semarang</p>
+                <div class="mt-3 flex items-center justify-between">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Tarif Mulai</span>
+                    <span class="text-base font-black text-slate-900">Rp 6.000<span class="text-xs font-normal text-slate-500">/jam</span></span>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-cyan-50 text-cyan-700">Sensor Kamera On</span>
+                </div>
+                <button onclick="bookThisSpot('mall-paragon-a5')" class="w-full mt-4 py-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold text-xs rounded-xl transition text-center shadow-xs">
+                  Pesan Cepat
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 4: Mall Ciputra -->
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition group">
+              <div class="relative h-40 bg-slate-100 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&auto=format&fit=crop&q=80" alt="Mall Ciputra" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                <span class="absolute top-2.5 left-2.5 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
+                  22 Slot Kosong
+                </span>
+                <span class="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur text-white text-[10px] font-semibold px-2 py-0.5 rounded">
+                  Buka s/d 22:00
+                </span>
+              </div>
+              <div class="p-4">
+                <h3 class="font-bold text-slate-900 text-base">Mall Ciputra – B14</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Jl. Simpang Lima No.1, Semarang</p>
+                <div class="mt-3 flex items-center justify-between">
+                  <div>
+                    <span class="text-[10px] text-slate-400 block">Tarif Mulai</span>
+                    <span class="text-base font-black text-slate-900">Rp 5.000<span class="text-xs font-normal text-slate-500">/jam</span></span>
+                  </div>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">Tersedia EV Charger</span>
+                </div>
+                <button onclick="bookThisSpot('mall-ciputra-b14')" class="w-full mt-4 py-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold text-xs rounded-xl transition text-center shadow-xs">
+                  Pesan Cepat
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section: 3 Langkah Mudah Parkir -->
+      <section class="py-14 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <span class="text-xs font-extrabold text-[#008874] uppercase tracking-wider">Proses Praktis & Cepat</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">3 Langkah Mudah Parkir Bersama FindPark</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-2">Tak ada lagi stres memutar area parkir bertingkat saat jam sibuk akhir pekan.</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+            <!-- Step 1 -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs relative text-left">
+              <span class="w-8 h-8 rounded-full bg-orange-500 text-white font-black text-sm flex items-center justify-center mb-4">1</span>
+              <div class="w-12 h-12 rounded-2xl bg-teal-50 text-[#008874] flex items-center justify-center text-xl mb-4">
+                <i class="fa-solid fa-map-location-dot"></i>
+              </div>
+              <h3 class="font-bold text-slate-900 text-base">Cari & Pesan Slot</h3>
+              <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Pilih mall tujuan, tentukan perkiraan durasi parkir, dan pilih zona slot yang paling strategis dekat lift.</p>
+              <div class="mt-4">
+                <span class="text-[11px] font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md">Slot tertahan eksklusif 30 menit</span>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs relative text-left">
+              <span class="w-8 h-8 rounded-full bg-orange-500 text-white font-black text-sm flex items-center justify-center mb-4">2</span>
+              <div class="w-12 h-12 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-xl mb-4">
+                <i class="fa-solid fa-qrcode"></i>
+              </div>
+              <h3 class="font-bold text-slate-900 text-base">Masuk Barrier Gate Instan</h3>
+              <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Pindai QR-pass digital dari dasbor ponsel atau biarkan sensor kamera membaca plat nomor Anda secara seamless.</p>
+              <div class="mt-4">
+                <span class="text-[11px] font-bold text-orange-700 bg-orange-50 px-2.5 py-1 rounded-md">Tanpa perlu cetak karcis fisik</span>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs relative text-left">
+              <span class="w-8 h-8 rounded-full bg-orange-500 text-white font-black text-sm flex items-center justify-center mb-4">3</span>
+              <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-4">
+                <i class="fa-solid fa-location-arrow"></i>
+              </div>
+              <h3 class="font-bold text-slate-900 text-base">Navigasi & Auto-Extend</h3>
+              <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Gunakan indoor wayfinding menuju spot parkir Anda, lalu tambahkan durasi parkir kapan pun melalui satu klik.</p>
+              <div class="mt-4">
+                <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md">Pembayaran otomatis e-Wallet</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Inovasi Parkir Cerdas FindPark -->
+      <section class="py-14 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-10">
+            <span class="text-xs font-extrabold text-[#008874] uppercase tracking-wider">Teknologi Mutakhir</span>
+            <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">Inovasi Parkir Cerdas FindPark</h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Dirancang untuk menghadirkan kenyamanan kelas satu bagi pengemudi harian maupun pengunjung mall.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Feature 1 -->
+            <div class="lg:col-span-2 bg-gradient-to-br from-teal-50/60 to-emerald-50/40 p-6 rounded-3xl border border-teal-100 flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-extrabold text-teal-800 uppercase flex items-center gap-1.5">
+                  <i class="fa-solid fa-satellite-dish"></i> Sensor IoT Ultra Modern
+                </span>
+                <h3 class="text-xl font-black text-slate-900 mt-1.5">Peta Denah Lantai Real-Time Berakurasi 99.4%</h3>
+                <p class="text-xs text-slate-600 mt-2 max-w-lg">Sensor ultrasonik dan kamera AI di setiap tiang gedung memberikan update kondisi dalam hitungan milidetik sehingga Anda langsung mengetahui denah lantai kosong.</p>
+              </div>
+              <div class="mt-6 bg-white p-3.5 rounded-2xl border border-teal-200/80 flex items-center justify-between shadow-xs">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-layer-group"></i>
+                  </div>
+                  <div>
+                    <h5 class="text-xs font-bold text-slate-800">Denah Interaktif Multi-Lantai</h5>
+                    <p class="text-[10px] text-slate-500">Tersedia di Basement 1, B2, Ground & Rooftop</p>
+                  </div>
+                </div>
+                <button onclick="navigateTo('page-explore')" class="px-3 py-1 bg-teal-50 text-teal-700 font-bold text-xs rounded-lg hover:bg-teal-100 transition">
+                  Live View
+                </button>
+              </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs flex flex-col justify-between">
+              <div>
+                <span class="text-xs font-extrabold text-orange-600 uppercase flex items-center gap-1.5">
+                  <i class="fa-solid fa-wallet"></i> Cashless Payment
+                </span>
+                <h3 class="text-lg font-black text-slate-900 mt-1.5">Multi-Pembayaran Tanpa Antre</h3>
+                <p class="text-xs text-slate-500 mt-2">Bayar langsung menggunakan GoPay, OVO, DANA, ShopeePay, atau scan QRIS terstandar.</p>
+              </div>
+              <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                <span class="text-[11px] text-slate-400 font-medium">Didukung oleh:</span>
+                <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+                  <span>GoPay</span> • <span>DANA</span> • <span>QRIS</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+              <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-base mb-3">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">Jaminan Slot Tertahan 30 Menit</h4>
+              <p class="text-xs text-slate-500 mt-1">Slot yang Anda reservasi dikunci dan tidak diberikan ke kendaraan lain selagi Anda berkendara menuju lokasi.</p>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+              <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-base mb-3">
+                <i class="fa-solid fa-magnifying-glass-location"></i>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">Fitur "Find My Car"</h4>
+              <p class="text-xs text-slate-500 mt-1">Lupa posisi mobil Anda? Cukup buka aplikasi, dan radar indoor memandu Anda tepat ke tiang parkir kendaraan.</p>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-base mb-3">
+                <i class="fa-solid fa-charging-station"></i>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm">EV Charging & Valet VIP</h4>
+              <p class="text-xs text-slate-500 mt-1">Kemudahan reservasi pengisian daya baterai mobil listrik (CCS2) atau layanan valet resmi.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Testimoni Pengemudi -->
+      <section class="py-14 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <span class="text-xs font-extrabold text-[#008874] uppercase tracking-wider">Ulasan Nyata Pengemudi</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">Dipercaya Lebih dari 50.000+ Komuter</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 text-left">
+            <!-- Review 1 -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
+              <div>
+                <div class="flex text-amber-400 text-xs mb-3">
+                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-xs text-slate-600 italic leading-relaxed">
+                  "Kalau ke DP Mall hari Sabtu biasanya putar 20 menit cuma buat muter nyari parkir. Pakai FindPark, slot udah ready begitu sampe gate, palang buka otomatis!"
+                </p>
+              </div>
+              <div class="mt-6 flex items-center gap-3 pt-4 border-t border-slate-100">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Angelica" class="w-10 h-10 rounded-full object-cover">
+                <div>
+                  <h4 class="text-xs font-bold text-slate-900">Angelica Prameswari</h4>
+                  <span class="text-[10px] text-slate-400">Pengguna Reguler Semarang</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
+              <div>
+                <div class="flex text-amber-400 text-xs mb-3">
+                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-xs text-slate-600 italic leading-relaxed">
+                  "Fitur Find My Car ngebantu banget pas saya lupa letak tiang parkir mobil di The Park Mall. Tinggal ikuti panah di aplikasi, langsung ketemu!"
+                </p>
+              </div>
+              <div class="mt-6 flex items-center gap-3 pt-4 border-t border-slate-100">
+                <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600 text-xs">BW</div>
+                <div>
+                  <h4 class="text-xs font-bold text-slate-900">Bambang Wicaksono</h4>
+                  <span class="text-[10px] text-slate-400">Digital Nomad & Konsultan</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Review 3 -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between">
+              <div>
+                <div class="flex text-amber-400 text-xs mb-3">
+                  <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                </div>
+                <p class="text-xs text-slate-600 italic leading-relaxed">
+                  "Sistem pembayaran non-tunai GoPay yang tersambung langsung bikin keluar mall super seamless. Tanpa perlu cari uang receh atau struk hilang."
+                </p>
+              </div>
+              <div class="mt-6 flex items-center gap-3 pt-4 border-t border-slate-100">
+                <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600 text-xs">RA</div>
+                <div>
+                  <h4 class="text-xs font-bold text-slate-900">Reza Ardian</h4>
+                  <span class="text-[10px] text-slate-400">Pengemudi Komuter Jakarta</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Download / Web CTA Banner -->
+      <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="bg-gradient-to-r from-teal-800 to-emerald-900 rounded-3xl p-8 sm:p-12 text-white relative overflow-hidden shadow-xl">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+              <div class="lg:col-span-8">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-teal-300">Unduh Aplikasi Gratis</span>
+                <h2 class="text-2xl sm:text-3xl font-black mt-1">Siap Menikmati Kemudahan Parkir Hari Ini?</h2>
+                <p class="text-xs sm:text-sm text-teal-100 mt-2 max-w-xl leading-relaxed">
+                  Download FindPark di App Store & Play Store atau lakukan reservasi instan langsung melalui browser web Anda. Dapatkan saldo parkir Rp 25.000 untuk pengguna baru!
+                </p>
+                <div class="mt-6 flex flex-wrap gap-3">
+                  <button class="px-5 py-2.5 rounded-xl bg-black/40 hover:bg-black/60 border border-white/20 text-xs font-bold flex items-center gap-2 transition">
+                    <i class="fa-brands fa-google-play text-base"></i>
+                    <div class="text-left">
+                      <span class="text-[9px] block text-slate-300">TERSEDIA DI</span>
+                      <span>Google Play</span>
+                    </div>
+                  </button>
+                  <button class="px-5 py-2.5 rounded-xl bg-black/40 hover:bg-black/60 border border-white/20 text-xs font-bold flex items-center gap-2 transition">
+                    <i class="fa-brands fa-apple text-base"></i>
+                    <div class="text-left">
+                      <span class="text-[9px] block text-slate-300">UNDUH DI</span>
+                      <span>App Store</span>
+                    </div>
+                  </button>
+                  <button onclick="navigateTo('page-explore')" class="px-6 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-xs transition shadow-lg">
+                    Booking via Web Saja &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <!-- Ticket Preview Box -->
+              <div class="lg:col-span-4 flex justify-center">
+                <div class="bg-white text-slate-800 rounded-2xl p-4 shadow-2xl max-w-xs w-full text-center">
+                  <span class="text-[10px] font-extrabold text-teal-800 uppercase tracking-wider">Tiket Masuk Aktif</span>
+                  <div class="my-3 p-4 bg-slate-900 rounded-xl text-white inline-block">
+                    <i class="fa-solid fa-qrcode text-5xl text-teal-400"></i>
+                  </div>
+                  <div class="text-xs font-mono font-bold text-slate-900">B 1256 AY • Slot G3-12</div>
+                  <p class="text-[10px] text-slate-500 mt-0.5">Pindai di Barrier Gate DP Mall</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: CARI PARKIR & PETA (FIGMA IMAGE 3) -->
+    <!-- ========================================== -->
+    <div id="page-explore" class="hidden">
+      <!-- Filter Bar -->
+      <section class="bg-white border-b border-slate-200 py-3.5 sticky top-20 z-30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            
+            <!-- Filters Group -->
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- Area Kota -->
+              <button class="flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 transition">
+                <i class="fa-solid fa-map text-[#008874]"></i>
+                <span>Semarang Kota</span>
+                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+              </button>
+
+              <!-- Jadwal Kedatangan -->
+              <button class="flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 transition">
+                <i class="fa-regular fa-calendar text-[#008874]"></i>
+                <span>Hari Ini, 14:30 WIB</span>
+              </button>
+
+              <!-- Estimasi Durasi -->
+              <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800">
+                <span class="text-slate-500 font-medium">Estimasi Durasi</span>
+                <button onclick="changeDuration(-1)" class="w-5 h-5 rounded bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-100">-</button>
+                <span id="filter-dur-label">2 Jam</span>
+                <button onclick="changeDuration(1)" class="w-5 h-5 rounded bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-100">+</button>
+              </div>
+
+              <!-- Vehicle Switcher -->
+              <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button class="flex items-center gap-1 px-3 py-1 text-xs font-bold bg-white text-slate-800 rounded-lg shadow-xs">
+                  <i class="fa-solid fa-car text-[10px]"></i> Mobil
+                </button>
+                <button class="flex items-center gap-1 px-3 py-1 text-xs font-semibold text-slate-500 hover:text-slate-800">
+                  <i class="fa-solid fa-motorcycle text-[10px]"></i> Motor
+                </button>
+              </div>
+
+              <!-- Live Mall Search Filter -->
+              <div class="relative min-w-[170px] max-w-xs">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                <input id="explore-search-input" type="text" placeholder="Cari mall di Semarang..." oninput="handleExploreSearch(this.value)" class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-[#008874] focus:bg-white transition" />
+              </div>
+            </div>
+
+            <!-- Reservasi Cepat Pill & Filter Lanjutan -->
+            <div class="flex items-center gap-2">
+              <button onclick="bookThisSpot('dp-mall-g3')" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-50 border border-orange-200 hover:bg-orange-100 text-orange-700 text-xs font-bold transition">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Reservasi Cepat</span>
+                <span id="quick-reserve-plate-pill" class="font-mono bg-white px-1.5 py-0.5 rounded border border-orange-200 text-slate-900">B 1256 AY</span>
+              </button>
+              <button onclick="showToast('Filter lanjutan: Valet, EV Charger, Difabel, Rooftop aktif.')" class="flex items-center gap-1 px-3.5 py-2 rounded-xl bg-[#008874] text-white text-xs font-bold shadow-xs hover:bg-[#006c5c] transition">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Filter Lanjutan</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Explore Split View: List on Left, Map on Right -->
+      <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Left Column: Spot List -->
+          <div class="lg:col-span-5">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <span class="text-[10px] font-extrabold uppercase text-slate-400">Hasil Terdekat</span>
+                <h3 class="text-base font-black text-slate-900">Spot Parkir Tersedia di Semarang</h3>
+              </div>
+              <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live 4 Lokasi
+              </span>
+            </div>
+
+            <!-- Dynamic Spots List -->
+            <div id="explore-spots-list" class="space-y-3">
+              <!-- Rendered via JS renderSpotsList() -->
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Map & Floating Selected Card -->
+          <div class="lg:col-span-7">
+            <div class="sticky top-40 bg-white rounded-3xl p-3 border border-slate-200 shadow-md">
+              
+              <!-- Map Canvas / Leaflet Container -->
+              <div id="semarang-map" class="relative rounded-2xl overflow-hidden">
+                <!-- Map loads here -->
+              </div>
+
+              <!-- Selected Mall Card Overlay (Bottom inside map card) -->
+              <div id="map-selected-card" class="mt-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <!-- Dynamic via updateSelectedMallCard() -->
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom Feature Highlights from Image 3 -->
+        <div class="mt-8 pt-6 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-gauge-high"></i>
+            </div>
+            <div>
+              <h5 class="text-xs font-bold text-slate-800">Kecepatan Masuk</h5>
+              <p class="text-[11px] text-slate-500">< 3 Detik (Scan QRIS / RFID)</p>
+            </div>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+              <h5 class="text-xs font-bold text-slate-800">Jaminan Slot</h5>
+              <p class="text-[11px] text-slate-500">100% Ditahan Selama 30 Menit</p>
+            </div>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-credit-card"></i>
+            </div>
+            <div>
+              <h5 class="text-xs font-bold text-slate-800">Pembayaran Otomatis</h5>
+              <p class="text-[11px] text-slate-500">GoPay, OVO, ShopeePay & DANA</p>
+            </div>
+          </div>
+
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-headset"></i>
+            </div>
+            <div>
+              <h5 class="text-xs font-bold text-slate-800">Bantuan Parkir</h5>
+              <p class="text-[11px] text-slate-500">Layanan Petugas 24 Jam</p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: BOOKING & RESERVASI (FIGMA IMAGE 1)-->
+    <!-- ========================================== -->
+    <div id="page-booking" class="block">
+      <!-- Breadcrumb -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2 text-xs text-slate-500 flex items-center gap-2">
+        <button onclick="navigateTo('page-home')" class="hover:text-slate-800 flex items-center gap-1">
+          <i class="fa-solid fa-house"></i> Beranda
+        </button>
+        <span>&gt;</span>
+        <button onclick="navigateTo('page-explore')" class="hover:text-slate-800">Cari Parkir</button>
+        <span>&gt;</span>
+        <span id="booking-breadcrumb-spot" class="text-teal-700 font-bold">Booking Slot DP Mall Semarang G3</span>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          <!-- Left Column: Form & Configuration -->
+          <div class="lg:col-span-8 space-y-6">
+
+            <!-- Banner Card: Spot Info & Photo (From Image 1) -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm relative overflow-hidden">
+              <div class="flex flex-wrap items-start justify-between gap-4 mb-4">
+                <div>
+                  <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200 mb-1.5">
+                    <span class="w-2 h-2 rounded-full bg-teal-500 sensor-live-indicator"></span>
+                    Smart Sensor Slot Aktif
+                  </span>
+                  <h2 id="booking-spot-title" class="text-2xl sm:text-3xl font-black text-slate-900">DP Mall Semarang – Slot G3</h2>
+                  <p id="booking-spot-subtitle" class="text-xs sm:text-sm text-slate-500 flex items-center gap-1.5 mt-1">
+                    <i class="fa-solid fa-location-crosshairs text-teal-600"></i>
+                    Lantai G3, Area B (Dekat Pintu Masuk Timur / Lobby XXI)
+                  </p>
+                </div>
+
+                <div class="bg-teal-50/70 border border-teal-200 px-3.5 py-2 rounded-2xl text-right">
+                  <span class="block text-[10px] font-bold uppercase text-slate-400">Tarif Jam Pertama</span>
+                  <span id="booking-spot-price" class="text-base sm:text-lg font-black text-teal-800">Rp 5.000<span class="text-xs text-slate-500 font-normal">/jam</span></span>
+                </div>
+              </div>
+
+              <!-- Parking Bay Visual with Tag -->
+              <div class="relative h-64 sm:h-72 rounded-2xl overflow-hidden shadow-inner bg-slate-900 group">
+                <img src="https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=1200&auto=format&fit=crop&q=80" alt="DP Mall Parking Bay" class="w-full h-full object-cover opacity-90 group-hover:scale-105 transition duration-700" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
+                
+                <!-- Overlay Bay Tag -->
+                <div class="absolute bottom-4 left-4 flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-slate-700 text-white shadow-xl">
+                  <div class="w-6 h-6 rounded-lg bg-teal-500 flex items-center justify-center text-xs font-black">
+                    P
+                  </div>
+                  <div class="text-xs font-medium">
+                    Nomor Slot: <span class="font-extrabold text-teal-300">G3-B14</span> • <span class="text-slate-300">Khusus Roda Empat</span>
+                  </div>
+                </div>
+
+                <!-- Live Camera Sensor Overlay Badge -->
+                <div class="absolute top-4 right-4 bg-black/60 backdrop-blur px-3 py-1 rounded-full text-[11px] font-bold text-white flex items-center gap-2 border border-white/20">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Sensor IoT Online
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 1: Informasi Pemesan (Data Sinkronisasi Akun) -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+              <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <i class="fa-regular fa-user text-teal-600"></i> Informasi Pemesan
+                </h3>
+                <span class="text-xs text-teal-700 font-semibold bg-teal-50 px-2.5 py-1 rounded-lg">
+                  Data Sinkronisasi Akun
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Nama Lengkap</label>
+                  <div class="relative">
+                    <i class="fa-regular fa-id-badge absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <input id="booker-name" type="text" value="Angelica Prameswari" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-600 focus:bg-white" />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Nomor WhatsApp Aktif</label>
+                  <div class="relative">
+                    <i class="fa-brands fa-whatsapp absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <input id="booker-phone" type="text" value="+62 812-3456-7890" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-600 focus:bg-white" />
+                  </div>
+                </div>
+
+                <div class="md:col-span-2">
+                  <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Email Konfirmasi e-Tiket</label>
+                  <div class="relative">
+                    <i class="fa-regular fa-envelope absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                    <input id="booker-email" type="email" value="angelica.prameswari@gmail.com" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-600 focus:bg-white" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2: Pilih Kendaraan -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+              <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <i class="fa-solid fa-car text-teal-600"></i> Pilih Kendaraan
+                </h3>
+                <button onclick="openAddVehicleModal()" class="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1">
+                  <i class="fa-solid fa-plus"></i> Tambah Baru
+                </button>
+              </div>
+
+              <!-- Radio Cards for Vehicles -->
+              <div id="booking-vehicles-container" class="flex flex-wrap gap-4">
+                <!-- Rendered dynamically by renderVehiclesInBooking() -->
+              </div>
+            </div>
+
+            <!-- Section 3: Jadwal & Durasi Parkir -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+              <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2 pb-3 mb-4 border-b border-slate-100">
+                <i class="fa-regular fa-clock text-teal-600"></i> Jadwal & Durasi Parkir
+              </h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Tanggal Kedatangan -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <span class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Tanggal Kedatangan</span>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 font-bold text-slate-800 text-sm">
+                      <i class="fa-regular fa-calendar-check text-teal-600"></i>
+                      <span>Hari Ini, 24 Mei 2025</span>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-teal-100 text-teal-800">Hari Kerja</span>
+                  </div>
+                </div>
+
+                <!-- Perkiraan Jam Masuk -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                  <span class="block text-[11px] font-bold uppercase text-slate-400 mb-1">Perkiraan Jam Masuk</span>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 font-bold text-slate-800 text-sm">
+                      <i class="fa-regular fa-clock text-teal-600"></i>
+                      <span>12:00 WIB</span>
+                    </div>
+                    <button onclick="showToast('Jam masuk dapat disesuaikan')" class="text-xs font-bold text-teal-700 hover:underline">Ubah</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Durasi Reservasi Stepper -->
+              <div class="mt-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <span class="block text-xs font-bold text-slate-800">Durasi Reservasi Tempat</span>
+                  <span id="duration-exit-time" class="text-xs text-slate-500">Perkiraan keluar pada pukul 13:00 WIB</span>
+                </div>
+
+                <!-- Stepper -->
+                <div class="flex items-center gap-3 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-xs">
+                  <button onclick="changeDuration(-1)" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center transition">
+                    <i class="fa-solid fa-minus text-xs"></i>
+                  </button>
+                  <div class="text-center px-3">
+                    <span id="duration-count" class="block text-sm font-black text-teal-800">1 Jam</span>
+                    <span class="text-[10px] text-slate-400">Rp 5.000 / jam</span>
+                  </div>
+                  <button onclick="changeDuration(1)" class="w-9 h-9 rounded-xl bg-orange-100 hover:bg-orange-200 text-orange-700 font-bold flex items-center justify-center transition">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 4: Layanan Tambahan (Add-ons) -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+              <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <i class="fa-solid fa-cart-plus text-teal-600"></i> Layanan Tambahan (Add-ons)
+                </h3>
+                <span class="text-xs text-slate-400 font-medium">Opsional</span>
+              </div>
+
+              <div class="space-y-3">
+                
+                <!-- Add-on 1: Valet -->
+                <label class="flex items-start justify-between p-4 rounded-2xl border border-slate-200 hover:border-teal-400 bg-slate-50/50 cursor-pointer transition">
+                  <div class="flex items-start gap-3">
+                    <input id="addon-valet" type="checkbox" onchange="toggleAddon('valet')" class="mt-1 w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300" />
+                    <div>
+                      <span class="font-bold text-slate-800 text-sm block">Valet Parking VIP</span>
+                      <p class="text-xs text-slate-500">Drop mobil langsung di Lobby Timur XXI tanpa perlu mencari blok parkir</p>
+                    </div>
+                  </div>
+                  <span class="text-xs font-extrabold text-teal-800 shrink-0 ml-3">+Rp 25.000</span>
+                </label>
+
+                <!-- Add-on 2: EV Charging -->
+                <label class="flex items-start justify-between p-4 rounded-2xl border border-slate-200 hover:border-teal-400 bg-slate-50/50 cursor-pointer transition">
+                  <div class="flex items-start gap-3">
+                    <input id="addon-ev" type="checkbox" onchange="toggleAddon('ev')" class="mt-1 w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300" />
+                    <div>
+                      <span class="font-bold text-slate-800 text-sm block">EV Fast Charging Station</span>
+                      <p class="text-xs text-slate-500">Akses slot parkir khusus dilengkapi pengisi daya cepat CCS2 (Up to 22 kW)</p>
+                    </div>
+                  </div>
+                  <span class="text-xs font-extrabold text-teal-800 shrink-0 ml-3">+Rp 30.000</span>
+                </label>
+
+                <!-- Add-on 3: Car Wash -->
+                <label class="flex items-start justify-between p-4 rounded-2xl border border-slate-200 hover:border-teal-400 bg-slate-50/50 cursor-pointer transition">
+                  <div class="flex items-start gap-3">
+                    <input id="addon-carwash" type="checkbox" onchange="toggleAddon('carwash')" class="mt-1 w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300" />
+                    <div>
+                      <span class="font-bold text-slate-800 text-sm block">Car Wash Express Exterior</span>
+                      <p class="text-xs text-slate-500">Pencucian bodi mobil waterless bergaransi kilap selagi Anda berbelanja</p>
+                    </div>
+                  </div>
+                  <span class="text-xs font-extrabold text-teal-800 shrink-0 ml-3">+Rp 40.000</span>
+                </label>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Sticky Ringkasan Biaya (Sidebar from Image 1) -->
+          <div class="lg:col-span-4 sticky top-28">
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg">
+              
+              <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <i class="fa-solid fa-receipt text-orange-500"></i> Ringkasan Biaya
+                </h3>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">1x Transaksi</span>
+              </div>
+
+              <!-- Price Breakdown Items -->
+              <div class="space-y-2.5 text-xs text-slate-600">
+                <div class="flex justify-between items-center">
+                  <span id="summary-parking-duration-label">Tarif Parkir (1 Jam)</span>
+                  <span id="summary-parking-fee" class="font-bold text-slate-900">Rp 5.000</span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                  <span>Biaya Layanan Aplikasi</span>
+                  <span class="font-bold text-slate-900">Rp 1.000</span>
+                </div>
+
+                <div class="flex justify-between items-center text-emerald-600">
+                  <span class="flex items-center gap-1">
+                    <i class="fa-solid fa-tag text-[10px]"></i> Promo Pengguna Baru
+                  </span>
+                  <span class="font-bold">-Rp 1.000</span>
+                </div>
+
+                <!-- Dynamic Add-ons List -->
+                <div id="summary-addons-list" class="pt-2 hidden space-y-1">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+
+              <!-- Promo Code Input Box -->
+              <div class="mt-4 pt-3 border-t border-slate-100">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Punya Kode Promo?</label>
+                <div class="flex gap-2">
+                  <input id="promo-input-field" type="text" placeholder="Contoh: HEMAT5K" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs uppercase font-bold focus:outline-none focus:border-teal-600" />
+                  <button onclick="applyPromoCode()" class="px-3 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-bold rounded-xl transition">
+                    Gunakan
+                  </button>
+                </div>
+              </div>
+
+              <!-- Grand Total -->
+              <div class="mt-4 pt-4 border-t border-slate-200">
+                <div class="flex items-baseline justify-between">
+                  <span class="text-xs text-slate-500">Total Estimasi Pembayaran</span>
+                  <span id="summary-grand-total" class="text-2xl font-black text-orange-500">Rp 5.000</span>
+                </div>
+                <span class="block text-[10px] text-slate-400 text-right mt-0.5">Sudah termasuk PPN</span>
+              </div>
+
+              <!-- Guarantee Banner -->
+              <div class="mt-5 p-3 rounded-2xl bg-teal-50/70 border border-teal-200 flex items-start gap-2.5 text-xs text-slate-700">
+                <i class="fa-solid fa-shield-halved text-teal-600 text-sm mt-0.5"></i>
+                <p class="leading-relaxed text-[11px]">
+                  <strong>Jaminan Slot:</strong> Tempat parkir Anda aman dan direservasi eksklusif hingga <strong>30 menit</strong> setelah jadwal jam masuk (pukul 12:30 WIB).
+                </p>
+              </div>
+
+              <!-- Action CTA Buttons -->
+              <div class="mt-6 space-y-3">
+                <button onclick="proceedToPayment()" class="w-full py-3.5 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-extrabold text-sm rounded-2xl shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2 transition">
+                  <span>Lanjutkan ke Pembayaran</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+                <button onclick="navigateTo('page-explore')" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-2xl transition flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-arrow-left text-[11px]"></i>
+                  <span>Kembali ke Peta Lokasi</span>
+                </button>
+              </div>
+
+              <!-- Support Widget -->
+              <div class="mt-6 p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-headset"></i>
+                  </div>
+                  <div>
+                    <span class="block text-[11px] font-bold text-slate-800">Butuh bantuan reservasi?</span>
+                    <span class="block text-[10px] text-slate-500">Hubungi Petugas DP Mall (G3)</span>
+                  </div>
+                </div>
+                <button onclick="showToast('Menghubungkan ke Call Center Petugas DP Mall G3...')" class="text-teal-700 hover:text-teal-900 text-xs font-bold">
+                  Hubungi
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 4: HALAMAN PEMBAYARAN & E-TIKET (FIGMA IMAGE 5 - THE NEW PAGE) -->
+    <!-- ============================================================== -->
+    <div id="page-payment" class="hidden">
+      
+      <!-- Top Active Transaction Header Bar -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-2">
+        <div class="bg-teal-50 border border-teal-200 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center text-xs font-bold">
+              <i class="fa-solid fa-file-invoice"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider bg-teal-200/70 text-teal-800 px-2 py-0.5 rounded">Transaksi Aktif</span>
+                <span id="pay-order-number" class="text-xs font-mono font-bold text-slate-800">Order #FPK-78829</span>
+              </div>
+              <h2 class="text-sm font-extrabold text-slate-900">Pembayaran & E-Tiket Parkir Terverifikasi</h2>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-medium text-slate-600">
+            <i class="fa-solid fa-shield-halved text-teal-600"></i>
+            <span>Enkripsi 256-bit Terproteksi Bank Indonesia</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Payment Split Grid -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+          <!-- Left Column: Pilih Metode Pembayaran & Ringkasan -->
+          <div class="lg:col-span-7 space-y-6">
+
+            <!-- Pilih Metode Pembayaran Card -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+              <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <i class="fa-solid fa-credit-card text-teal-600"></i> Pilih Metode Pembayaran
+                </h3>
+                <span class="text-xs text-slate-400 font-semibold">Langkah 2 dari 2</span>
+              </div>
+
+              <!-- Category 1: Dompet Digital (E-Wallet) -->
+              <div class="mb-5">
+                <span class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2.5">
+                  Dompet Digital (E-Wallet)
+                </span>
+
+                <div class="space-y-2.5">
+                  
+                  <!-- GoPay (Active by default) -->
+                  <div onclick="setPaymentMethod('gopay')" data-method="gopay" class="payment-option-card flex items-center justify-between p-3.5 rounded-2xl border-2 border-teal-500 bg-teal-50/20 cursor-pointer hover:border-teal-500 transition">
+                    <div class="flex items-center gap-3">
+                      <div class="w-12 h-10 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center font-bold text-sky-600 text-sm">
+                        gopay
+                      </div>
+                      <div>
+                        <div class="flex items-center gap-2">
+                          <span class="font-bold text-slate-900 text-sm">GoPay Digital Wallet</span>
+                          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Terhubung</span>
+                        </div>
+                        <span id="pay-gopay-balance" class="text-xs text-slate-500 font-medium">Saldo Aktif: Rp 150.000</span>
+                      </div>
+                    </div>
+                    <div class="w-5 h-5 rounded-full border-2 border-teal-600 flex items-center justify-center payment-radio-dot">
+                      <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                    </div>
+                  </div>
+
+                  <!-- DANA -->
+                  <div onclick="setPaymentMethod('dana')" data-method="dana" class="payment-option-card flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 cursor-pointer hover:border-teal-400 transition">
+                    <div class="flex items-center gap-3">
+                      <div class="w-12 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center font-bold text-blue-600 text-sm">
+                        DANA
+                      </div>
+                      <div>
+                        <span class="font-bold text-slate-900 text-sm">DANA Indonesia</span>
+                        <p class="text-xs text-slate-500">Hubungkan akun DANA instant tap (Saldo Rp 85.000)</p>
+                      </div>
+                    </div>
+                    <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center payment-radio-dot"></div>
+                  </div>
+
+                  <!-- OVO -->
+                  <div onclick="setPaymentMethod('ovo')" data-method="ovo" class="payment-option-card flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 cursor-pointer hover:border-teal-400 transition">
+                    <div class="flex items-center gap-3">
+                      <div class="w-12 h-10 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center font-bold text-purple-600 text-sm">
+                        ovo
+                      </div>
+                      <div>
+                        <span class="font-bold text-slate-900 text-sm">OVO SmartPay</span>
+                        <p class="text-xs text-slate-500">Saldo OVO Cash & OVO Points</p>
+                      </div>
+                    </div>
+                    <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center payment-radio-dot"></div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Category 2: QRIS & Pembayaran Instan -->
+              <div class="mb-5">
+                <span class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2.5">
+                  QRIS & Pembayaran Instan
+                </span>
+
+                <div onclick="setPaymentMethod('qris')" data-method="qris" class="payment-option-card flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 cursor-pointer hover:border-teal-400 transition">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center font-black text-red-600 text-xs">
+                      QRIS
+                    </div>
+                    <div>
+                      <span class="font-bold text-slate-900 text-sm">QRIS Standar Nasional</span>
+                      <p class="text-xs text-slate-500">Scan bebas via BCA, Mandiri, Livin, GoPay, LinkAja</p>
+                    </div>
+                  </div>
+                  <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center payment-radio-dot"></div>
+                </div>
+              </div>
+
+              <!-- Category 3: Virtual Account (Bank Transfer) -->
+              <div>
+                <span class="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider mb-2.5">
+                  Virtual Account (Bank Transfer)
+                </span>
+
+                <div class="grid grid-cols-3 gap-3">
+                  <button onclick="setPaymentMethod('va-bca')" data-method="va-bca" class="payment-option-card p-3 rounded-xl border border-slate-200 hover:border-teal-400 text-center transition">
+                    <span class="block font-black text-slate-800 text-sm">BCA</span>
+                    <span class="text-[10px] text-slate-400">Virtual Account</span>
+                  </button>
+
+                  <button onclick="setPaymentMethod('va-mandiri')" data-method="va-mandiri" class="payment-option-card p-3 rounded-xl border border-slate-200 hover:border-teal-400 text-center transition">
+                    <span class="block font-black text-slate-800 text-sm">Mandiri</span>
+                    <span class="text-[10px] text-slate-400">Livin VA</span>
+                  </button>
+
+                  <button onclick="setPaymentMethod('va-bri')" data-method="va-bri" class="payment-option-card p-3 rounded-xl border border-slate-200 hover:border-teal-400 text-center transition">
+                    <span class="block font-black text-slate-800 text-sm">BRI</span>
+                    <span class="text-[10px] text-slate-400">BRIVA</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Ringkasan Pemesanan Slot Card (From Image 5) -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+              <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <i class="fa-regular fa-square-check text-teal-600"></i> Ringkasan Pemesanan Slot
+                </h3>
+                <span class="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg">
+                  1 Kendaraan Roda 4
+                </span>
+              </div>
+
+              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-4">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Lokasi Area</span>
+                    <h4 id="pay-spot-name" class="font-extrabold text-slate-900 text-sm mt-0.5">DP Mall Semarang – Lantai Dasar G3</h4>
+                    <p id="pay-spot-address" class="text-xs text-slate-500">Jl. Pemuda No.150, Sekayu, Semarang Tengah</p>
+                  </div>
+                  <div class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center font-bold text-sm">
+                    P
+                  </div>
+                </div>
+
+                <div class="mt-3 pt-3 border-t border-slate-200 grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span class="text-slate-400 block text-[10px]">Durasi Sewa Awal</span>
+                    <strong class="text-slate-800">1 Jam Terpilih</strong>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block text-[10px]">Estimasi Kedatangan</span>
+                    <strong class="text-slate-800">12:00 WIB Hari Ini</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Price breakdown rows -->
+              <div class="space-y-2 text-xs text-slate-600">
+                <div class="flex justify-between items-center">
+                  <span id="pay-base-label">Tarif Dasar Parkir Mobil (1 Jam)</span>
+                  <span id="pay-base-rate" class="font-bold text-slate-900">Rp 5.000</span>
+                </div>
+                <div class="flex justify-between items-center text-teal-700 font-medium">
+                  <span>Biaya Layanan Smart-Gate Digital</span>
+                  <span class="font-bold">Gratis (Promo)</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span>Pajak Parkir Daerah (10%)</span>
+                  <span class="font-bold text-slate-900">Termasuk</span>
+                </div>
+              </div>
+
+              <!-- Total and CTA Button -->
+              <div class="mt-4 pt-4 border-t border-slate-200">
+                <div class="flex items-baseline justify-between mb-3">
+                  <div>
+                    <span class="block text-xs font-bold text-slate-800">Total Tagihan</span>
+                    <span id="pay-button-desc" class="text-[11px] text-slate-400">Diproses otomatis via GoPay</span>
+                  </div>
+                  <span id="pay-total-tagihan" class="text-2xl font-black text-orange-500">Rp 5.000</span>
+                </div>
+
+                <!-- Interactive CTA Button -->
+                <button id="btn-bayar-sekarang" onclick="executePayment()" class="w-full py-4 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-black text-sm rounded-2xl shadow-xl shadow-orange-500/25 flex items-center justify-center gap-2 transition">
+                  <span>Bayar & Amankan Slot Sekarang</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Right Column: Status Terkonfirmasi & Digital Smart-Pass (E-Tiket) -->
+          <div class="lg:col-span-5 sticky top-28">
+            <div id="digital-smart-pass-card" class="bg-white rounded-3xl p-6 border-2 border-teal-500/80 shadow-xl transition-all duration-300">
+              
+              <!-- Confirmation Header -->
+              <div class="text-center pb-4 border-b border-slate-100">
+                <div class="w-14 h-14 rounded-full bg-teal-600 text-white flex items-center justify-center text-2xl mx-auto shadow-lg shadow-teal-600/30 mb-2">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+                <div id="ticket-status-badge" class="mb-1">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 sensor-live-indicator"></span>
+                    STATUS TERKONFIRMASI
+                  </span>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 mt-1">Pembayaran Berhasil!</h3>
+                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
+                  Slot parkir eksklusif Anda telah berhasil diamankan di sistem gerbang otomatis.
+                </p>
+
+                <!-- Amount paid badge -->
+                <div class="mt-3 flex items-center justify-center gap-4 text-xs">
+                  <div>
+                    <span class="text-slate-400 text-[10px] block">Total Terbayar</span>
+                    <strong id="ticket-total-terbayar" class="text-slate-900 font-extrabold text-sm">Rp 5.000</strong>
+                  </div>
+                  <div class="h-6 w-px bg-slate-200"></div>
+                  <div>
+                    <span class="text-slate-400 text-[10px] block">Kanal Pembayaran</span>
+                    <span class="text-emerald-700 font-bold flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Lunas via GoPay
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Digital Smart-Pass Body -->
+              <div class="mt-5 p-4 rounded-2xl bg-gradient-to-b from-slate-50 to-teal-50/40 border border-teal-200">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-[11px] font-black tracking-wider uppercase text-teal-800 flex items-center gap-1.5">
+                    <i class="fa-solid fa-ticket text-teal-600"></i> Digital Smart-Pass
+                  </span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-orange-100 text-orange-700 uppercase tracking-wider">
+                    Entry Ready
+                  </span>
+                </div>
+
+                <!-- High-Tech QR Code Box with Laser Scanner Line -->
+                <div class="relative bg-white p-5 rounded-2xl border border-slate-200 text-center shadow-inner overflow-hidden my-3">
+                  <div class="qr-scanner-line"></div>
+                  <div class="flex justify-center items-center py-1">
+                    <!-- High Quality Clean Scalable QR SVG -->
+                    <svg class="w-36 h-36" viewBox="0 0 100 100" fill="none">
+                      <!-- Corner Markers -->
+                      <rect x="5" y="5" width="26" height="26" rx="4" fill="#0f172a" />
+                      <rect x="9" y="9" width="18" height="18" rx="2" fill="#ffffff" />
+                      <rect x="13" y="13" width="10" height="10" rx="1" fill="#008874" />
+                      
+                      <rect x="69" y="5" width="26" height="26" rx="4" fill="#0f172a" />
+                      <rect x="73" y="9" width="18" height="18" rx="2" fill="#ffffff" />
+                      <rect x="77" y="13" width="10" height="10" rx="1" fill="#008874" />
+
+                      <rect x="5" y="69" width="26" height="26" rx="4" fill="#0f172a" />
+                      <rect x="9" y="73" width="18" height="18" rx="2" fill="#ffffff" />
+                      <rect x="13" y="77" width="10" height="10" rx="1" fill="#008874" />
+
+                      <!-- Grid Patterns -->
+                      <rect x="36" y="8" width="6" height="6" fill="#0f172a" />
+                      <rect x="46" y="8" width="6" height="6" fill="#0f172a" />
+                      <rect x="56" y="8" width="6" height="6" fill="#0f172a" />
+                      
+                      <rect x="36" y="20" width="8" height="8" fill="#fa5a00" />
+                      <rect x="50" y="20" width="6" height="6" fill="#0f172a" />
+                      
+                      <rect x="8" y="36" width="6" height="6" fill="#0f172a" />
+                      <rect x="20" y="44" width="8" height="8" fill="#0f172a" />
+                      
+                      <!-- Center FindPark Badge -->
+                      <rect x="38" y="38" width="24" height="24" rx="4" fill="#008874" />
+                      <path d="M 46 44 L 54 44 A 4 4 0 0 1 54 52 L 46 52 Z M 46 44 L 46 56" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none" />
+
+                      <rect x="68" y="40" width="8" height="6" fill="#0f172a" />
+                      <rect x="80" y="48" width="8" height="8" fill="#0f172a" />
+
+                      <rect x="36" y="72" width="6" height="6" fill="#0f172a" />
+                      <rect x="46" y="80" width="8" height="8" fill="#008874" />
+                      <rect x="68" y="70" width="10" height="6" fill="#0f172a" />
+                      <rect x="82" y="82" width="8" height="8" fill="#0f172a" />
+                    </svg>
+                  </div>
+                  <span class="block text-[10px] text-slate-400 mt-1">Scan otomatis di barrier gate</span>
+                </div>
+
+                <!-- Booking Code & Registered Plate -->
+                <div class="grid grid-cols-2 gap-2 text-center my-3">
+                  <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+                    <span class="block text-[10px] text-slate-400 uppercase font-medium">Kode Booking Resmi</span>
+                    <div class="flex items-center justify-center gap-1.5 mt-0.5">
+                      <strong class="text-sm font-black text-slate-900 font-mono">G3 – 123456</strong>
+                      <button onclick="copyBookingCode()" class="text-slate-400 hover:text-teal-600 transition" title="Salin Kode">
+                        <i class="fa-regular fa-copy text-xs"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+                    <span class="block text-[10px] text-slate-400 uppercase font-medium">Plat Kendaraan</span>
+                    <div class="flex items-center justify-center mt-0.5">
+                      <span id="ticket-plate" class="text-xs font-mono font-black text-orange-800 bg-orange-100 px-2 py-0.5 rounded border border-orange-200">
+                        B 1256 AY
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Spot & Schedule Details -->
+                <div class="space-y-1.5 text-xs pt-1">
+                  <div class="flex justify-between items-center text-slate-600">
+                    <span>Titik Lokasi & Slot:</span>
+                    <strong class="text-teal-900 font-bold">DP Mall (Slot G3-12)</strong>
+                  </div>
+                  <div class="flex justify-between items-center text-slate-600">
+                    <span>Jadwal Waktu:</span>
+                    <strong class="text-slate-800 font-bold">12:00 – 13:00 WIB</strong>
+                  </div>
+                  <div class="flex justify-between items-center text-slate-600">
+                    <span>Garansi Slot Aktif:</span>
+                    <span class="text-emerald-600 font-mono font-bold" id="reservation-hold-timer">29:54</span>
+                  </div>
+                </div>
+
+                <div class="mt-3 pt-2 border-t border-teal-200/60 text-[10px] text-slate-500 text-center">
+                  <i class="fa-solid fa-circle-info text-teal-600 mr-1"></i>
+                  Tunjukkan tiket QR ini pada kamera scanner palang masuk. SHA256: 4b91...ef62
+                </div>
+              </div>
+
+              <!-- Interactive New Features Action Buttons -->
+              <div class="mt-4 space-y-2.5">
+                
+                <!-- Feature 1: Open Indoor Floor Wayfinding Simulator -->
+                <button onclick="openWayfindingModal()" class="w-full py-3 bg-[#008874] hover:bg-[#006c5c] active:scale-95 text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-location-arrow"></i>
+                  <span>Buka Navigasi ke Lokasi / Slot</span>
+                </button>
+
+                <!-- Feature 2: Download E-Tiket PDF -->
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="openPrintTicketModal()" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-file-pdf text-red-500"></i>
+                    <span>Download PDF</span>
+                  </button>
+
+                  <button onclick="shareToWhatsApp()" class="py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+                    <i class="fa-brands fa-whatsapp text-emerald-600"></i>
+                    <span>Kirim WA</span>
+                  </button>
+                </div>
+
+                <!-- Feature 3: Smart Barrier ANPR Simulator -->
+                <button onclick="openBarrierSimulationModal()" class="w-full py-2.5 bg-orange-50 hover:bg-orange-100 text-orange-700 font-bold text-xs rounded-xl border border-orange-200 transition flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-camera"></i>
+                  <span>Simulasi Palang Otomatis (ANPR)</span>
+                </button>
+
+                <!-- Back to Home Button -->
+                <button onclick="navigateTo('page-home')" class="w-full py-2 text-slate-500 hover:text-slate-800 font-semibold text-xs transition text-center block">
+                  &larr; Kembali ke Beranda
+                </button>
+              </div>
+
+              <!-- Help Box -->
+              <div class="mt-4 p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-headset text-teal-600 text-sm"></i>
+                  <span class="text-[11px] text-slate-600 font-medium">Butuh bantuan di lokasi parkir?</span>
+                </div>
+                <button onclick="showToast('Menghubungkan CS DP Mall di WhatsApp: +62 812-3456-7890')" class="text-teal-700 font-bold text-xs hover:underline">
+                  Hubungi CS
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Panduan Masuk Tanpa Karcis Fisik (FindPark Seamless - From Image 5) -->
+        <div class="mt-12 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+          <div class="flex items-center justify-between pb-3 mb-6 border-b border-slate-100">
+            <div>
+              <span class="text-xs font-bold text-teal-700 uppercase tracking-wider">FindPark Seamless Access</span>
+              <h3 class="text-lg font-black text-slate-900 mt-0.5">Panduan Masuk Tanpa Karcis Fisik</h3>
+              <p class="text-xs text-slate-500">Ikuti 3 tahapan mudah saat kendaraan Anda tiba di gerbang DP Mall Semarang</p>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-teal-50 text-teal-700 text-xs font-bold border border-teal-200 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Sistem Deteksi Otomatis Aktif
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Step 1 -->
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 relative">
+              <span class="w-7 h-7 rounded-full bg-orange-500 text-white font-black text-xs flex items-center justify-center mb-3">1</span>
+              <h4 class="font-extrabold text-slate-900 text-sm">Mendekat ke Palang Masuk</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Posisikan mobil Anda di lajur bertanda "FindPark Fast Lane / QR Ready". Tidak perlu menekan tombol karcis fisik.
+              </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 relative">
+              <span class="w-7 h-7 rounded-full bg-orange-500 text-white font-black text-xs flex items-center justify-center mb-3">2</span>
+              <h4 class="font-extrabold text-slate-900 text-sm">Scan QR atau ANPR Otomatis</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Kamera otomatis mendeteksi plat B 1256 AY, atau scan QR Code dari layar ponsel Anda ke kaca reader gerbang.
+              </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 relative">
+              <span class="w-7 h-7 rounded-full bg-orange-500 text-white font-black text-xs flex items-center justify-center mb-3">3</span>
+              <h4 class="font-extrabold text-slate-900 text-sm">Menuju Slot Khusus G3-12</h4>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                Lampu sensor hijau di atas slot G3-12 telah menyala khusus untuk reservasi Anda hingga jam 13:00 WIB.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 5: RIWAYAT TRANSAKSI                  -->
+    <!-- ========================================== -->
+    <div id="page-history" class="hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <span class="text-xs font-bold text-teal-700 uppercase tracking-wider">Aktivitas Reservasi</span>
+            <h2 class="text-2xl font-black text-slate-900 mt-0.5">Riwayat Transaksi Parkir</h2>
+          </div>
+          <button onclick="navigateTo('page-explore')" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl shadow transition">
+            + Pesan Parkir Baru
+          </button>
+        </div>
+
+        <div id="history-orders-container" class="space-y-4">
+          <!-- Rendered via JS renderHistoryList() -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 6: NEW MENU - FIND MY CAR (RADAR & PELACAK MOBIL 3D)       -->
+    <!-- ============================================================== -->
+    <div id="page-tracker" class="hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-teal-800 mb-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 sensor-live-indicator"></span>
+              <span>Koneksi IoT & Sensor Beacon Aktif</span>
+            </div>
+            <h2 class="text-2xl font-black text-slate-900">Find My Car • Radar Pelacak Parkir</h2>
+            <p class="text-xs text-slate-500">Temukan posisi mobil Anda dengan akurat hingga radius tiang indoor mall.</p>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500 font-medium">Kendaraan:</span>
+            <span class="px-3 py-1 rounded-xl bg-orange-100 text-orange-800 font-mono font-bold text-xs border border-orange-200">
+              B 1256 AY
+            </span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          <!-- Left: High-Tech Radar Visual & Remote Actions -->
+          <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-center">
+            
+            <!-- Radar Scanner Container -->
+            <div class="relative w-72 h-72 sm:w-80 sm:h-80 mx-auto rounded-full bg-slate-950 border-4 border-slate-800 overflow-hidden shadow-2xl flex items-center justify-center my-4">
+              
+              <!-- Radar Concentric Rings -->
+              <div class="absolute inset-4 rounded-full border border-teal-500/20"></div>
+              <div class="absolute inset-14 rounded-full border border-teal-500/30"></div>
+              <div class="absolute inset-24 rounded-full border border-teal-500/40"></div>
+              <div class="absolute w-full h-px bg-teal-500/20"></div>
+              <div class="absolute h-full w-px bg-teal-500/20"></div>
+
+              <!-- Radar Sweep Rotating Beam -->
+              <svg class="absolute inset-0 w-full h-full radar-sweep-beam pointer-events-none" viewBox="0 0 200 200">
+                <defs>
+                  <linearGradient id="radarBeamGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#008874" stop-opacity="0.6" />
+                    <stop offset="100%" stop-color="#008874" stop-opacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d="M 100,100 L 200,100 A 100,100 0 0,0 170.7,29.3 Z" fill="url(#radarBeamGrad)" />
+              </svg>
+
+              <!-- Center You / Pedestrian Marker -->
+              <div class="absolute z-10 w-4 h-4 rounded-full bg-sky-400 ring-4 ring-sky-400/30" title="Posisi Anda Saat Ini"></div>
+              <span class="absolute z-10 text-[9px] font-bold text-sky-300 mt-6 bg-slate-900/80 px-1.5 py-0.5 rounded">Anda</span>
+
+              <!-- Target Car Marker on Pillar G3-B14 -->
+              <div class="absolute z-20 top-20 right-20 flex flex-col items-center">
+                <!-- Car Hazard Flashers -->
+                <div class="relative p-2.5 rounded-2xl bg-[#008874] text-white shadow-lg shadow-teal-500/50 cursor-pointer group" onclick="toggleHazardLights()">
+                  <i class="fa-solid fa-car-side text-lg"></i>
+                  <!-- Hazard Indicator Dots -->
+                  <span class="car-hazard-indicator absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                  <span class="car-hazard-indicator absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                </div>
+                <span class="text-[10px] font-mono font-black text-teal-300 bg-slate-900/90 px-2 py-0.5 rounded-md mt-1 border border-teal-500/40">
+                  B 1256 AY
+                </span>
+                <span class="text-[9px] font-bold text-orange-400">Tiang B14 (~45m)</span>
+              </div>
+
+            </div>
+
+            <!-- Remote Interactive Controls -->
+            <div class="mt-6 pt-4 border-t border-slate-100">
+              <span class="block text-xs font-bold text-slate-400 uppercase mb-3">Kontrol Jarak Jauh (Remote Action)</span>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                
+                <!-- Honk Horn -->
+                <button onclick="triggerCarHonk()" class="py-3 px-4 bg-teal-50 hover:bg-teal-100 text-teal-800 font-extrabold text-xs rounded-xl border border-teal-200 transition flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-bullhorn text-sm"></i>
+                  <span>Bunyikan Klakson</span>
+                </button>
+
+                <!-- Hazard Light -->
+                <button id="btn-toggle-hazard" onclick="toggleHazardLights()" class="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs rounded-xl transition flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-lightbulb text-sm"></i>
+                  <span>Lampu Hazard</span>
+                </button>
+
+                <!-- AR Walking Route -->
+                <button onclick="openWayfindingModal()" class="py-3 px-4 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-diamond-turn-right text-sm"></i>
+                  <span>Rute Jalan Kaki</span>
+                </button>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right: Car Info & Real-Time Stats -->
+          <div class="lg:col-span-5 space-y-5">
+            
+            <!-- Live Duration Stopwatch Card -->
+            <div class="bg-gradient-to-br from-teal-800 to-slate-900 rounded-3xl p-6 text-white shadow-xl">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-teal-300">Waktu Parkir Berjalan</span>
+              <div class="flex items-baseline justify-between mt-1 mb-3">
+                <span id="tracker-stopwatch-display" class="text-4xl font-black font-mono tracking-wider text-white">00:48:14</span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-teal-700 text-teal-100">Aktif</span>
+              </div>
+              <div class="pt-3 border-t border-teal-700/60 flex items-center justify-between text-xs text-teal-200">
+                <span>Waktu Masuk: <strong>12:00 WIB</strong></span>
+                <span>Tarif Berjalan: <strong>Rp 5.000</strong></span>
+              </div>
+            </div>
+
+            <!-- Spot Location Details -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+              <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-location-dot text-teal-600"></i>
+                <span>Titik Presisi Kendaraan</span>
+              </h3>
+
+              <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2 text-xs">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Gedung:</span>
+                  <strong class="text-slate-900">DP Mall Semarang</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Lantai Parkir:</span>
+                  <strong class="text-slate-900">Lantai G3 (Ground 3)</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Patokan Tiang:</span>
+                  <strong class="text-orange-600 font-bold font-mono">Tiang G3 - B14</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Akses Terdekat:</span>
+                  <strong class="text-slate-900">Lobby Timur / Lift XXI</strong>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Estimasi Jalan:</span>
+                  <strong class="text-emerald-700 font-bold">~45 Meter (1 Menit)</strong>
+                </div>
+              </div>
+
+              <!-- Vehicle Health Stats -->
+              <div class="grid grid-cols-2 gap-3 text-xs">
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                  <span class="text-[10px] text-slate-400 uppercase font-medium block">Tegangan Aki</span>
+                  <strong class="text-slate-900 font-mono text-sm">12.6 V</strong>
+                  <span class="text-[9px] text-emerald-600 font-bold block mt-0.5">Kondisi Prima</span>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                  <span class="text-[10px] text-slate-400 uppercase font-medium block">Sensor Slot</span>
+                  <strong class="text-emerald-700 font-bold text-sm">Terkunci</strong>
+                  <span class="text-[9px] text-slate-500 block mt-0.5">Keamanan Terjamin</span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 7: NEW MENU - LANGGANAN PASS BULANAN (COMMUTER MEMBER)     -->
+    <!-- ============================================================== -->
+    <div id="page-subscription" class="hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <span class="text-xs font-extrabold text-[#008874] uppercase tracking-wider">Pass Komuter Bulanan</span>
+          <h2 class="text-3xl font-black text-slate-900 mt-1">Langganan Parkir Tanpa Batas</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-2">
+            Nikmati kemudahan akses parkir harian tanpa repot bayar berulang kali di seluruh mall dan gedung rekanan FindPark.
+          </p>
+        </div>
+
+        <!-- User Active Membership Banner -->
+        <div class="bg-gradient-to-r from-teal-900 via-teal-800 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl mb-10">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 rounded-2xl bg-teal-500/30 border border-teal-400/40 flex items-center justify-center text-2xl text-teal-300">
+                <i class="fa-solid fa-crown"></i>
+              </div>
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-teal-300">Member Aktif FindPark VIP</span>
+                <h3 class="text-xl font-black">All-Mall Semarang Commuter Pass</h3>
+                <p class="text-xs text-teal-100">Kendaraan: <span class="font-mono font-bold">B 1256 AY</span> • Masa aktif hingga: <strong>30 November 2025</strong></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="px-3.5 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold">
+                Auto-Renew Aktif via GoPay
+              </span>
+              <button onclick="showToast('Paket Anda aktif dan berjalan normal')" class="px-4 py-2 bg-white text-slate-900 font-bold text-xs rounded-xl shadow-xs hover:bg-slate-100 transition">
+                Kelola Langganan
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 Subscription Plans Grid -->
+        <div id="subscription-plans-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Rendered via JS renderSubscriptionPlans() -->
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 8: NEW MENU - EV CHARGING STATIONS (MOBIL LISTRIK)         -->
+    <!-- ============================================================== -->
+    <div id="page-ev" class="hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <div>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-teal-800 mb-1">
+              <i class="fa-solid fa-bolt text-emerald-600"></i>
+              <span>Eco Green Mobility</span>
+            </div>
+            <h2 class="text-2xl font-black text-slate-900">EV Fast Charging Station • Semarang</h2>
+            <p class="text-xs text-slate-500">Cek ketersediaan konektor charger CCS2 & Type 2 secara langsung sebelum berkendara.</p>
+          </div>
+
+          <button onclick="startSimulateEvCharging('DP Mall Semarang EV Hub')" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+            <i class="fa-solid fa-plug-circle-bolt"></i>
+            <span>Simulasi Pengisian Daya (Demo)</span>
+          </button>
+        </div>
+
+        <!-- EV Stations Grid -->
+        <div id="ev-stations-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Rendered via JS renderEvStations() -->
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 9: NEW MENU - PUSAT BANTUAN & LAYANAN DARURAT (SOS 24/7)   -->
+    <!-- ============================================================== -->
+    <div id="page-emergency" class="hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <div class="mb-8">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800 mb-1">
+            <i class="fa-solid fa-circle-exclamation text-red-600"></i>
+            <span>Layanan Siaga 24 Jam di Area Parkir</span>
+          </div>
+          <h2 class="text-2xl font-black text-slate-900">Bantuan Darurat & Customer Care</h2>
+          <p class="text-xs text-slate-500">Petugas lapangan siap membantu kendala kendaraan Anda langsung di lokasi slot parkir.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          <!-- Left: 4 Emergency Action Cards -->
+          <div class="lg:col-span-7 space-y-4">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- SOS 1: Jumper Aki -->
+              <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-red-400 transition cursor-pointer" onclick="requestEmergencyHelp('Jumper Aki Darurat')">
+                <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-lg mb-3">
+                  <i class="fa-solid fa-car-battery"></i>
+                </div>
+                <h4 class="font-extrabold text-slate-900 text-sm">Jumper Aki Darurat</h4>
+                <p class="text-xs text-slate-500 mt-1">Mobil tidak mau start? Petugas membawa booster aki portabel ke slot Anda.</p>
+                <span class="inline-block mt-3 text-xs font-bold text-red-600">Panggil Bantuan &rarr;</span>
+              </div>
+
+              <!-- SOS 2: Pompa Angin Ban -->
+              <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-orange-400 transition cursor-pointer" onclick="requestEmergencyHelp('Pompa / Tambal Ban Portabel')">
+                <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-lg mb-3">
+                  <i class="fa-solid fa-gauge"></i>
+                </div>
+                <h4 class="font-extrabold text-slate-900 text-sm">Pompa & Tambal Ban</h4>
+                <p class="text-xs text-slate-500 mt-1">Ban kempis atau kurang angin di basement mall? Bantuan alat kompresor cepat.</p>
+                <span class="inline-block mt-3 text-xs font-bold text-orange-600">Panggil Bantuan &rarr;</span>
+              </div>
+
+              <!-- SOS 3: Valet Darurat -->
+              <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-teal-400 transition cursor-pointer" onclick="requestEmergencyHelp('Panggilan Sopir Valet')">
+                <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center text-lg mb-3">
+                  <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <h4 class="font-extrabold text-slate-900 text-sm">Panggilan Valet Khusus</h4>
+                <p class="text-xs text-slate-500 mt-1">Perlu bantuan memarkirkan mobil di sudut sempit atau buru-buru ke acara?</p>
+                <span class="inline-block mt-3 text-xs font-bold text-teal-700">Panggil Valet &rarr;</span>
+              </div>
+
+              <!-- SOS 4: Kunci Tertinggal -->
+              <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-purple-400 transition cursor-pointer" onclick="requestEmergencyHelp('Bantuan Kunci Mobil Tertinggal')">
+                <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg mb-3">
+                  <i class="fa-solid fa-key"></i>
+                </div>
+                <h4 class="font-extrabold text-slate-900 text-sm">Kunci Tertinggal di Mobil</h4>
+                <p class="text-xs text-slate-500 mt-1">Petugas keamanan gedung bersertifikat siap membantu membuka pintu mobil darurat.</p>
+                <span class="inline-block mt-3 text-xs font-bold text-purple-600">Panggil Bantuan &rarr;</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right: Interactive Live Support Chat -->
+          <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col h-[460px]">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-[#008874] text-white flex items-center justify-center text-sm">
+                  <i class="fa-solid fa-headset"></i>
+                </div>
+                <div>
+                  <h4 class="font-extrabold text-slate-900 text-sm">Live Chat CS DP Mall (G3)</h4>
+                  <span class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online • Respon Cepat
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Message Box -->
+            <div id="support-chat-messages" class="flex-1 overflow-y-auto space-y-2.5 p-2 bg-slate-50 rounded-2xl border border-slate-100 mb-3 text-xs">
+              <div class="flex justify-start">
+                <div class="bg-white text-slate-800 rounded-2xl rounded-tl-none px-4 py-2 text-xs max-w-xs border border-slate-200 shadow-xs">
+                  <span class="block text-[10px] font-bold text-teal-700 mb-0.5">CS FindPark Official</span>
+                  Halo Kak Angelica! Ada yang bisa kami bantu terkait reservasi atau kendaraan Anda di DP Mall Lantai G3?
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Input Form -->
+            <form onsubmit="sendSupportChatMessage(event)" class="flex gap-2">
+              <input id="support-chat-input" type="text" placeholder="Ketik pertanyaan atau kendala..." class="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800 focus:outline-none focus:border-teal-600 focus:bg-white" />
+              <button type="submit" class="px-4 py-2.5 bg-[#008874] hover:bg-[#006c5c] text-white rounded-xl text-xs font-bold transition shadow-xs">
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </form>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER (Matching Figma with New Official Logo) -->
+  <footer class="bg-white border-t border-slate-200 mt-16 pt-8 pb-12 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <img src="assets/images/logo-cropped.jpg" alt="FindPark - FAST TRACKER AREA" class="h-9 w-auto object-contain" />
+          <span>&copy; 2025 PT FindPark Digital Indonesia. Hak Cipta Dilindungi.</span>
+        </div>
+        <div class="flex items-center gap-4 text-xs font-medium">
+          <a href="#" class="hover:text-slate-800">Ketentuan Layanan</a>
+          <a href="#" class="hover:text-slate-800">Kebijakan Privasi</a>
+          <a href="#" onclick="navigateTo('page-emergency')" class="hover:text-slate-800">Pusat Bantuan</a>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] text-slate-400">Pembayaran Aman:</span>
+          <div class="flex items-center gap-2 font-bold text-slate-700 text-xs">
+            <span>QRIS</span> • <span>GoPay</span> • <span>OVO</span> • <span>DANA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- MODAL 1: AUTHENTICATION / LOGIN (IMAGE 4)  -->
+  <!-- ========================================== -->
+  <div id="modal-auth" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    <div class="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-slate-200 grid grid-cols-1 md:grid-cols-12 relative animate-fade-in">
+      
+      <!-- Close Button -->
+      <button onclick="closeAuthModal()" class="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Left Promo Panel (Matching Image 4) -->
+      <div class="md:col-span-5 bg-gradient-to-br from-[#008874] to-teal-900 p-8 text-white flex flex-col justify-between">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-teal-200 bg-teal-800/80 px-2.5 py-1 rounded-full">
+            Smart Parking Experience
+          </span>
+          <h3 class="text-xl font-black mt-3 leading-snug">Parkir Cepat, Nyaman, dan Terjamin.</h3>
+          <p class="text-xs text-teal-100 mt-2 leading-relaxed">
+            Temukan lokasi parkir impian di pusat perbelanjaan, gedung perkantoran, dan titik transit sebelum Anda tiba.
+          </p>
+
+          <!-- Active Plate Connected Box -->
+          <div class="mt-6 bg-teal-800/80 rounded-2xl p-3.5 border border-teal-600/50">
+            <span class="text-[10px] uppercase text-teal-300 font-bold block">Plat Terhubung Aktif</span>
+            <div class="flex items-center justify-between mt-1">
+              <span class="font-mono text-base font-black text-white">B 1256 AY</span>
+              <span class="text-[10px] bg-orange-500 text-white font-bold px-2 py-0.5 rounded">Auto-Pass</span>
+            </div>
+          </div>
+
+          <!-- Feature bullet points -->
+          <ul class="mt-5 space-y-2 text-xs text-teal-100">
+            <li class="flex items-center gap-2">
+              <i class="fa-solid fa-check text-teal-300 text-[10px]"></i> Akses Instan Slot Parkir
+            </li>
+            <li class="flex items-center gap-2">
+              <i class="fa-solid fa-check text-teal-300 text-[10px]"></i> Riwayat & E-Pass Terintegrasi
+            </li>
+            <li class="flex items-center gap-2">
+              <i class="fa-solid fa-check text-teal-300 text-[10px]"></i> Bebas Biaya Layanan Pengguna Baru
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-8 pt-4 border-t border-teal-700/60 text-[11px] text-teal-200">
+          "Sangat membantu saat jam sibuk di mall, slot sudah aman di booking sebelum berangkat!"
+        </div>
+      </div>
+
+      <!-- Right Form Panel (Matching Image 4) -->
+      <div class="md:col-span-7 p-8">
+        
+        <!-- Tabs Masuk / Daftar -->
+        <div class="flex bg-slate-100 p-1 rounded-xl mb-6 max-w-xs">
+          <button id="auth-tab-masuk" onclick="switchAuthTab('masuk')" class="flex-1 py-2 text-center text-xs font-bold text-slate-800 bg-white rounded-lg shadow-sm">
+            Masuk
+          </button>
+          <button id="auth-tab-daftar" onclick="switchAuthTab('daftar')" class="flex-1 py-2 text-center text-xs font-medium text-slate-500 hover:text-slate-800">
+            Daftar Akun Baru
+          </button>
+        </div>
+
+        <div>
+          <h2 id="auth-modal-title" class="text-2xl font-black text-slate-900">Login •</h2>
+          <p class="text-xs text-slate-500 mt-1">Masuk ke akun Anda untuk melanjutkan pemesanan slot dan rute parkir cerdas.</p>
+        </div>
+
+        <form id="form-auth-login" class="mt-6 space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Email, Username, atau No. WhatsApp</label>
+            <div class="relative">
+              <i class="fa-regular fa-envelope absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+              <input type="text" value="angelica.prameswari@gmail.com" class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-600 focus:bg-white" required />
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="block text-xs font-bold text-slate-600">Kata Sandi</label>
+              <a href="#" class="text-[11px] text-teal-700 font-bold hover:underline">Lupa Sandi?</a>
+            </div>
+            <div class="relative">
+              <i class="fa-solid fa-lock absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+              <input id="auth-password" type="password" value="••••••••••••" class="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-600 focus:bg-white" required />
+              <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-3">
+                <i id="auth-pwd-eye" class="fa-regular fa-eye text-slate-400"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs">
+            <label class="flex items-center gap-2 cursor-pointer text-slate-600">
+              <input type="checkbox" checked class="w-4 h-4 rounded text-orange-500 focus:ring-orange-400" />
+              <span>Ingat saya di peramban ini</span>
+            </label>
+            <span class="text-[11px] text-slate-400 flex items-center gap-1">
+              <i class="fa-solid fa-shield-halved text-teal-600"></i> 256-bit SSL
+            </span>
+          </div>
+
+          <button id="auth-submit-btn" type="submit" class="w-full py-3 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+            <span>Masuk ke Akun FindPark</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <div class="mt-6 pt-4 border-t border-slate-100">
+          <span class="block text-center text-[10px] uppercase font-bold text-slate-400 mb-3">Atau Lanjutkan Dengan</span>
+          <div class="grid grid-cols-2 gap-3">
+            <button onclick="closeAuthModal(); showToast('Masuk dengan Akun Google berhasil!')" class="py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">
+              <i class="fa-brands fa-google text-red-500"></i> Google
+            </button>
+            <button onclick="closeAuthModal(); showToast('Kode OTP WhatsApp terkirim!')" class="py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center justify-center gap-2">
+              <i class="fa-brands fa-whatsapp text-emerald-600"></i> WhatsApp OTP
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-6 flex justify-between items-center text-xs text-slate-500">
+          <span>Belum memiliki akun? <a href="#" onclick="switchAuthTab('daftar')" class="text-teal-700 font-bold hover:underline">Daftar</a></span>
+          <a href="#" onclick="closeAuthModal(); showToast('Mode Tamu aktif')" class="text-slate-400 hover:text-slate-700">Mode Tamu &rarr;</a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 2: TAMBAH KENDARAAN BARU             -->
+  <!-- ========================================== -->
+  <div id="modal-add-vehicle" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative">
+      <button onclick="closeAddVehicleModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-car-side"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-extrabold text-slate-900">Tambah Kendaraan Baru</h3>
+          <p class="text-xs text-slate-500">Daftarkan plat nomor untuk sinkronisasi ANPR otomatis</p>
+        </div>
+      </div>
+
+      <form id="form-add-vehicle" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nomor Plat Polisi</label>
+          <input id="new-veh-plate" type="text" placeholder="Contoh: B 1234 XYZ" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono font-bold text-slate-900 focus:outline-none focus:border-teal-600 focus:bg-white uppercase" required />
+          <span class="text-[10px] text-slate-400 mt-1 block">Pastikan nomor plat sesuai STNK untuk sensor kamera masuk.</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Merk & Tipe Kendaraan</label>
+          <input id="new-veh-name" type="text" placeholder="Contoh: Honda HR-V Putih" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-teal-600 focus:bg-white" required />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Jenis Kendaraan</label>
+          <select id="new-veh-type" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-600">
+            <option value="SUV">SUV (Mobil Penumpang)</option>
+            <option value="Sedan">Sedan</option>
+            <option value="MPV">MPV / Minivan</option>
+            <option value="Hatchback">Hatchback / City Car</option>
+            <option value="EV">Mobil Listrik (Electric Vehicle)</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs rounded-xl shadow-md transition">
+          Simpan & Gunakan Kendaraan
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 3: INDOOR PARKING WAYFINDING SIMULATOR (ENGAGING FEATURE)           -->
+  <!-- ========================================================================= -->
+  <div id="modal-wayfinding" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 relative">
+      <button onclick="closeWayfindingModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center text-base">
+            <i class="fa-solid fa-diamond-turn-right"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">Indoor Wayfinding Simulator</h3>
+            <p class="text-xs text-slate-500">Panduan Menuju Slot G3-12 (Lantai G3 Dekat XXI)</p>
+          </div>
+        </div>
+        <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Live Sensor
+        </span>
+      </div>
+
+      <!-- Floor Plan Canvas / SVG Layout -->
+      <div class="bg-slate-900 rounded-2xl p-4 relative overflow-hidden text-white shadow-inner">
+        <div class="flex justify-between items-center text-xs text-slate-400 mb-2">
+          <span>Pintu Masuk: <strong class="text-white">Gate Timur B</strong></span>
+          <span>Target: <strong class="text-teal-400 font-mono">SLOT G3-12</strong></span>
+        </div>
+
+        <svg class="w-full h-64 bg-slate-950 rounded-xl border border-slate-800" viewBox="0 0 500 240">
+          <!-- Parking Bay Slots Top Row -->
+          <rect x="30" y="20" width="40" height="60" fill="#1e293b" stroke="#334155" stroke-width="2" rx="3" />
+          <text x="50" y="55" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">G3-08</text>
+          
+          <rect x="80" y="20" width="40" height="60" fill="#1e293b" stroke="#334155" stroke-width="2" rx="3" />
+          <text x="100" y="55" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">G3-09</text>
+
+          <rect x="130" y="20" width="40" height="60" fill="#1e293b" stroke="#334155" stroke-width="2" rx="3" />
+          <text x="150" y="55" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">G3-10</text>
+
+          <rect x="180" y="20" width="40" height="60" fill="#334155" stroke="#475569" stroke-width="2" rx="3" />
+          <text x="200" y="55" fill="#94a3b8" font-size="10" text-anchor="middle" font-family="monospace">G3-11</text>
+
+          <!-- TARGET BAY: G3-12 (Glow Green) -->
+          <rect x="230" y="20" width="50" height="65" fill="#008874" stroke="#10b981" stroke-width="3" rx="4" />
+          <text x="255" y="45" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle" font-family="monospace">G3-12</text>
+          <text x="255" y="60" fill="#a7f3d0" font-size="8" font-weight="bold" text-anchor="middle">RESERVED</text>
+          <circle cx="255" cy="27" r="4" fill="#34d399" class="sensor-live-indicator" />
+
+          <!-- More Bays -->
+          <rect x="290" y="20" width="40" height="60" fill="#1e293b" stroke="#334155" stroke-width="2" rx="3" />
+          <text x="310" y="55" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">G3-13</text>
+
+          <rect x="340" y="20" width="40" height="60" fill="#1e293b" stroke="#334155" stroke-width="2" rx="3" />
+          <text x="360" y="55" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">G3-14</text>
+
+          <!-- Bottom Row Parking Bays -->
+          <rect x="80" y="150" width="40" height="60" fill="#1e293b" stroke="#334155" stroke-width="2" rx="3" />
+          <text x="100" y="185" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">G3-01</text>
+
+          <rect x="130" y="150" width="40" height="60" fill="#1e293b" stroke="#334155" stroke-width="2" rx="3" />
+          <text x="150" y="185" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">G3-02</text>
+
+          <rect x="180" y="150" width="40" height="60" fill="#1e293b" stroke="#334155" stroke-width="2" rx="3" />
+          <text x="200" y="185" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">G3-03</text>
+
+          <rect x="230" y="150" width="40" height="60" fill="#1e293b" stroke="#334155" stroke-width="2" rx="3" />
+          <text x="250" y="185" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">G3-04</text>
+
+          <rect x="280" y="150" width="40" height="60" fill="#1e293b" stroke="#334155" stroke-width="2" rx="3" />
+          <text x="300" y="185" fill="#64748b" font-size="10" text-anchor="middle" font-family="monospace">G3-05</text>
+
+          <!-- Driving Aisle Path with Glowing Dotted Animated Line -->
+          <path d="M 15,115 L 255,115 L 255,87" stroke="#fa5a00" stroke-width="4" stroke-dasharray="8 6" fill="none" class="car-driving-path" />
+
+          <!-- Car Marker at Entry -->
+          <circle cx="15" cy="115" r="7" fill="#fa5a00" />
+          <text x="15" y="135" fill="#fa5a00" font-size="9" font-weight="bold" text-anchor="middle">Gate Masuk</text>
+
+          <!-- Lift XXI Marker -->
+          <rect x="420" y="80" width="60" height="70" fill="#0f172a" stroke="#008874" stroke-width="2" rx="6" />
+          <text x="450" y="112" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle">LOBBY XXI</text>
+          <text x="450" y="125" fill="#94a3b8" font-size="8" text-anchor="middle">Lift Mall</text>
+        </svg>
+
+        <div class="mt-3 flex items-center justify-between text-xs text-slate-300">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+            <span>Lampu sensor hijau di atas slot menyala khusus plat <strong class="text-white">B 1256 AY</strong></span>
+          </div>
+          <span class="text-teal-400 font-bold">Jarak dari Gate: ~45 meter</span>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end">
+        <button onclick="closeWayfindingModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition">
+          Tutup Panduan Navigasi
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 4: SMART BARRIER ANPR SIMULATOR (ENGAGING FEATURE)                  -->
+  <!-- ========================================================================= -->
+  <div id="modal-barrier-sim" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative text-center">
+      <button onclick="closeBarrierSimulationModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <span class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full">
+        Simulasi Palang Masuk ANPR
+      </span>
+      <h3 class="text-lg font-black text-slate-900 mt-2">FindPark Seamless Barrier Gate</h3>
+      <p class="text-xs text-slate-500 mt-0.5">Uji coba deteksi plat otomatis tanpa perlu menyentuh tombol karcis</p>
+
+      <!-- Barrier Gate Graphic Box -->
+      <div class="my-6 bg-slate-900 rounded-2xl p-6 text-white relative h-52 flex items-center justify-center overflow-hidden">
+        
+        <!-- Overhead Camera Icon -->
+        <div class="absolute top-3 left-4 flex items-center gap-1.5 text-xs text-slate-400">
+          <i class="fa-solid fa-video text-teal-400 animate-pulse"></i>
+          <span>ANPR Camera 4K Ready</span>
+        </div>
+
+        <!-- Stop / Go Light -->
+        <div class="absolute top-3 right-4 flex items-center gap-1 bg-slate-800 px-2 py-1 rounded-lg border border-slate-700">
+          <span id="sim-gate-light" class="w-3 h-3 rounded-full bg-red-500 transition-colors duration-500"></span>
+          <span class="text-[10px] text-slate-300">Signal</span>
+        </div>
+
+        <!-- Boom Barrier Mechanism SVG -->
+        <svg class="w-full h-36" viewBox="0 0 260 120">
+          <!-- Pillar -->
+          <rect x="20" y="45" width="22" height="70" fill="#f97316" rx="4" />
+          <circle cx="31" cy="55" r="5" fill="#ffffff" />
+          
+          <!-- Moving Barrier Arm -->
+          <line id="sim-barrier-arm" x1="31" y1="55" x2="230" y2="55" stroke="#ef4444" stroke-width="8" stroke-dasharray="25 15" stroke-linecap="round" class="barrier-arm" />
+          
+          <!-- Car Graphic in Front -->
+          <rect x="130" y="80" width="85" height="35" rx="6" fill="#008874" />
+          <rect x="145" y="70" width="55" height="20" rx="4" fill="#38bdf8" opacity="0.8" />
+          <!-- Wheels -->
+          <circle cx="150" cy="115" r="7" fill="#0f172a" />
+          <circle cx="195" cy="115" r="7" fill="#0f172a" />
+          <!-- Plate Text -->
+          <text x="172" y="102" fill="#ffffff" font-size="8" font-family="monospace" font-weight="bold" text-anchor="middle">B 1256 AY</text>
+        </svg>
+
+        <div class="absolute bottom-2 inset-x-0 text-center">
+          <span id="sim-barrier-status" class="text-xs font-bold text-teal-300">Standby Palang Sensor.</span>
+        </div>
+      </div>
+
+      <button onclick="triggerBarrierOpenSimulation()" class="w-full py-3 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-play"></i>
+        <span>Dekatkan Mobil & Buka Palang Otomatis</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 5: QRIS INSTANT PAYMENT SIMULATOR                                   -->
+  <!-- ========================================================================= -->
+  <div id="modal-qris" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 text-center relative">
+      <button onclick="closeQrisModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="w-12 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center font-black text-red-600 text-sm mx-auto mb-2">
+        QRIS
+      </div>
+      <h3 class="text-base font-extrabold text-slate-900">QRIS Standar Nasional</h3>
+      <p class="text-xs text-slate-500">Scan QR Code ini menggunakan aplikasi mobile banking atau e-wallet apa pun.</p>
+
+      <div class="my-4 p-4 bg-white rounded-2xl border-2 border-slate-200 inline-block shadow-inner">
+        <svg class="w-44 h-44" viewBox="0 0 100 100" fill="none">
+          <rect x="5" y="5" width="26" height="26" rx="4" fill="#0f172a" />
+          <rect x="9" y="9" width="18" height="18" rx="2" fill="#ffffff" />
+          <rect x="13" y="13" width="10" height="10" rx="1" fill="#dc2626" />
+          
+          <rect x="69" y="5" width="26" height="26" rx="4" fill="#0f172a" />
+          <rect x="73" y="9" width="18" height="18" rx="2" fill="#ffffff" />
+          <rect x="77" y="13" width="10" height="10" rx="1" fill="#dc2626" />
+
+          <rect x="5" y="69" width="26" height="26" rx="4" fill="#0f172a" />
+          <rect x="9" y="73" width="18" height="18" rx="2" fill="#ffffff" />
+          <rect x="13" y="77" width="10" height="10" rx="1" fill="#dc2626" />
+
+          <rect x="36" y="12" width="6" height="6" fill="#0f172a" />
+          <rect x="48" y="24" width="8" height="8" fill="#0f172a" />
+          <rect x="20" y="44" width="8" height="8" fill="#0f172a" />
+          <rect x="42" y="42" width="16" height="16" rx="2" fill="#dc2626" />
+          <rect x="68" y="44" width="8" height="8" fill="#0f172a" />
+          <rect x="44" y="74" width="8" height="8" fill="#0f172a" />
+        </svg>
+      </div>
+
+      <div class="text-xs font-bold text-slate-800 mb-1">
+        Nominal Tagihan: <span class="text-orange-500 font-black">Rp 5.000</span>
+      </div>
+      <span class="text-[10px] text-slate-400 block mb-4">Berlaku hingga 04:59 menit</span>
+
+      <button onclick="simulateQrisScanSuccess()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-xs rounded-xl shadow-md transition">
+        Simulasikan Pembayaran QRIS Sukses &rarr;
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 6: VIRTUAL ACCOUNT MODAL                                            -->
+  <!-- ========================================================================= -->
+  <div id="modal-va" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 relative text-left">
+      <button onclick="closeVaModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <span class="text-[10px] font-extrabold uppercase tracking-wider text-teal-700 bg-teal-50 px-2 py-0.5 rounded">
+        Transfer Virtual Account
+      </span>
+      <h3 id="va-bank-name" class="text-lg font-black text-slate-900 mt-2">BCA Virtual Account</h3>
+      <p class="text-xs text-slate-500">Lakukan pembayaran melalui ATM, Mobile Banking, atau Internet Banking.</p>
+
+      <div class="my-4 p-4 bg-slate-50 rounded-2xl border border-slate-200">
+        <span class="text-[10px] uppercase font-bold text-slate-400">Nomor Virtual Account</span>
+        <div class="flex items-center justify-between mt-1">
+          <span id="va-number-code" class="text-base font-mono font-black text-slate-900">8021 0812 3456 7890</span>
+          <button onclick="copyVaNumber()" class="text-teal-700 hover:text-teal-900 font-bold text-xs">
+            <i class="fa-regular fa-copy"></i> Salin
+          </button>
+        </div>
+      </div>
+
+      <div class="text-xs text-slate-600 space-y-1 mb-4">
+        <div class="flex justify-between">
+          <span>Total Tagihan:</span>
+          <strong class="text-orange-500 font-bold">Rp 5.000</strong>
+        </div>
+        <div class="flex justify-between">
+          <span>Batas Waktu:</span>
+          <strong class="text-slate-800">2 Jam ke Depan</strong>
+        </div>
+      </div>
+
+      <button onclick="closeVaModal(); executePayment()" class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs rounded-xl shadow-md transition">
+        Saya Sudah Bayar via VA
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 7: PRINT / DOWNLOAD PDF E-TIKET MODAL                               -->
+  <!-- ========================================================================= -->
+  <div id="modal-print-ticket" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 relative">
+      <button onclick="closePrintTicketModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Printable Ticket Element -->
+      <div id="printable-ticket" class="bg-white p-6 border-2 border-dashed border-teal-600 rounded-3xl text-left">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+          <div>
+            <span class="text-xl font-black text-slate-900">FindPark</span>
+            <span class="block text-[9px] font-bold text-slate-400 uppercase">E-Pass Parkir Digital Resmi</span>
+          </div>
+          <span class="px-2.5 py-1 rounded bg-teal-100 text-teal-800 font-mono text-xs font-bold">LUNAS</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 my-4 text-xs">
+          <div>
+            <span class="text-slate-400 block text-[10px]">Nama Pengemudi</span>
+            <strong class="text-slate-800">Angelica Prameswari</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">Plat Terdaftar</span>
+            <strong class="text-slate-800 font-mono">B 1256 AY</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">Lokasi Parkir</span>
+            <strong class="text-slate-800">DP Mall Semarang – Lantai G3</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">Nomor Slot Khusus</span>
+            <strong class="text-teal-700 font-bold">Slot G3-12</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">Waktu Reservasi</span>
+            <strong class="text-slate-800">12:00 – 13:00 WIB (1 Jam)</strong>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[10px]">Total Terbayar</span>
+            <strong class="text-orange-600 font-black">Rp 5.000 (GoPay)</strong>
+          </div>
+        </div>
+
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
+          <span class="text-xs font-mono font-bold text-slate-700 tracking-widest block">||||| | |||| ||| ||||||| |||||</span>
+          <span class="text-[10px] text-slate-500 font-mono">KODE: G3-123456 • SHA256: 4B91E2</span>
+        </div>
+      </div>
+
+      <div class="mt-4 flex gap-3">
+        <button onclick="executePrintTicket()" class="flex-1 py-3 bg-[#008874] hover:bg-[#006c5c] text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-print"></i> Cetak E-Tiket / Simpan PDF
+        </button>
+        <button onclick="closePrintTicketModal()" class="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+          Selesai
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 8: EV CHARGING SIMULATOR MODAL (NEW FEATURE)                        -->
+  <!-- ========================================================================= -->
+  <div id="modal-ev-charging-sim" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative text-center">
+      <button onclick="closeEvChargingModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
+        <i class="fa-solid fa-bolt mr-1"></i> Sesi Pengisian Daya Aktif
+      </span>
+      <h3 id="ev-sim-station-title" class="text-lg font-black text-slate-900 mt-2">DP Mall Semarang EV Hub</h3>
+      <p class="text-xs text-slate-500">Konektor CCS2 50kW Fast Charging Terhubung ke Plat B 1256 AY</p>
+
+      <!-- Battery Meter Visual Box -->
+      <div class="my-6 p-6 rounded-2xl bg-slate-900 text-white relative overflow-hidden">
+        <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+          <span>Kapasitas Baterai</span>
+          <span class="text-emerald-400 font-bold flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Mengisi Cepat
+          </span>
+        </div>
+
+        <!-- Big Battery Graphic -->
+        <div class="relative w-full h-12 rounded-xl bg-slate-800 border-2 border-emerald-500/60 p-1 flex items-center mb-3">
+          <div id="ev-charging-meter" class="h-full rounded-lg bg-gradient-to-r from-teal-500 to-emerald-400 charging-glow transition-all duration-500" style="width: 42%;"></div>
+        </div>
+
+        <div class="flex items-baseline justify-between">
+          <span id="ev-charging-percent" class="text-4xl font-black text-emerald-400 font-mono">42%</span>
+          <div class="text-right text-xs">
+            <span class="text-slate-400 block text-[10px]">Daya Tersalurkan</span>
+            <strong id="ev-charging-kwh" class="text-white font-mono text-sm">18.9 kWh</strong>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800 grid grid-cols-2 gap-2 text-xs text-slate-400 text-left">
+          <div>Estimasi Penuh: <strong class="text-white">~28 Menit</strong></div>
+          <div>Tarif: <strong class="text-emerald-400">Rp 2.466/kWh</strong></div>
+        </div>
+      </div>
+
+      <button onclick="closeEvChargingModal()" class="w-full py-3 bg-[#008874] hover:bg-[#006c5c] text-white font-extrabold text-xs rounded-xl shadow-md transition">
+        Selesai / Putuskan Koneksi
+      </button>
+    </div>
+  </div>
+
+  <!-- FLOATING PROTOTYPE QUICK NAVIGATOR -->
+  <div class="fixed bottom-6 left-6 z-40">
+    <div class="bg-slate-900/95 text-white backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-2xl border border-slate-700/80 flex flex-wrap items-center gap-1.5 text-xs max-w-xl">
+      <span class="font-bold text-teal-400 flex items-center gap-1 pl-1 shrink-0">
+        <i class="fa-solid fa-layer-group"></i> Menu:
+      </span>
+      <button onclick="navigateTo('page-home')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition" title="Beranda Landing Page">
+        Beranda
+      </button>
+      <button onclick="navigateTo('page-explore')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition" title="Peta & Cari Parkir">
+        Peta
+      </button>
+      <button onclick="navigateTo('page-booking')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition" title="Booking & Reservasi">
+        Booking
+      </button>
+      <button onclick="navigateTo('page-payment')" class="px-2 py-1 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold transition shadow-xs" title="Halaman Pembayaran & E-Pass">
+        Bayar ✨
+      </button>
+      <button onclick="navigateTo('page-tracker')" class="px-2 py-1 rounded-lg bg-emerald-800/80 hover:bg-emerald-700 text-emerald-200 font-bold transition" title="Find My Car (Radar Pelacak)">
+        Radar 📍
+      </button>
+      <button onclick="navigateTo('page-subscription')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition" title="Langganan Pass Komuter">
+        Pass 💳
+      </button>
+      <button onclick="navigateTo('page-ev')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition" title="EV Fast Charging">
+        EV ⚡
+      </button>
+      <button onclick="navigateTo('page-history')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition" title="Riwayat Transaksi">
+        Riwayat
+      </button>
+      <button onclick="navigateTo('page-emergency')" class="px-2 py-1 rounded-lg bg-red-900/70 hover:bg-red-800 text-red-200 font-bold transition" title="Bantuan Darurat SOS">
+        SOS 🚨
+      </button>
+      <div class="h-4 w-px bg-slate-700 mx-1"></div>
+      <button onclick="openAuthModal()" class="px-2 py-1 rounded-lg bg-teal-800/80 hover:bg-teal-700 text-teal-200 font-bold transition" title="Modal Login/Daftar (Figma)">
+        <i class="fa-solid fa-user-lock"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/map.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+/* FindPark Custom Styles & Animations */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #008874;
+  --primary-dark: #006b5b;
+  --primary-light: #e6f6f3;
+  --orange-cta: #fa5a00;
+  --orange-hover: #e04f00;
+  --slate-dark: #1e293b;
+  --slate-muted: #64748b;
+  --bg-soft: #f8fafc;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Indonesian License Plate Badge */
+.license-plate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'Courier New', Courier, monospace, monospace;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.65rem;
+  border-radius: 0.375rem;
+  background-color: #1e293b;
+  color: #ffffff;
+  border: 1.5px solid #0f172a;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.license-plate-white {
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1.5px solid #0f172a;
+}
+
+.license-plate-peach {
+  background-color: #ffedd5;
+  color: #9a3412;
+  border: 1.5px solid #fed7aa;
+}
+
+/* Pulse Glow Effect for Sensors */
+@keyframes sensor-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.sensor-live-indicator {
+  animation: sensor-pulse 2s infinite;
+}
+
+@keyframes scan-laser {
+  0% {
+    top: 0%;
+    opacity: 0.8;
+  }
+  50% {
+    top: 96%;
+    opacity: 1;
+  }
+  100% {
+    top: 0%;
+    opacity: 0.8;
+  }
+}
+
+.qr-scanner-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #008874, #10b981, #008874, transparent);
+  box-shadow: 0 0 12px #10b981;
+  animation: scan-laser 2.5s ease-in-out infinite;
+}
+
+/* Car barrier animation */
+@keyframes barrier-lift {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-75deg); }
+}
+
+.barrier-arm {
+  transform-origin: 15px 50px;
+  transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.barrier-open {
+  transform: rotate(-78deg);
+}
+
+/* Car movement animation on wayfinding map */
+@keyframes drive-car {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.car-driving-path {
+  stroke-dasharray: 8 6;
+  animation: drive-path-dash 1.5s linear infinite;
+}
+
+@keyframes drive-path-dash {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+/* Shimmer placeholder */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0fdf4 0%, #dcfce7 50%, #f0fdf4 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Radar Sweep Animation for Find My Car */
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.radar-sweep-beam {
+  animation: radar-sweep 3s linear infinite;
+  transform-origin: center center;
+}
+
+/* Hazard Lights Blink Animation */
+@keyframes hazard-blink {
+  0%, 100% { opacity: 0.2; filter: drop-shadow(0 0 0px #f59e0b); }
+  50% { opacity: 1; filter: drop-shadow(0 0 16px #f59e0b); }
+}
+
+.hazard-active {
+  animation: hazard-blink 0.8s ease-in-out infinite;
+}
+
+/* EV Battery Charging Glow */
+@keyframes battery-pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; filter: drop-shadow(0 0 8px #10b981); }
+}
+
+.charging-glow {
+  animation: battery-pulse 1.5s ease-in-out infinite;
+}
+
+/* Custom interactive map container */
+#semarang-map {
+  height: 520px;
+  width: 100%;
+  border-radius: 1rem;
+  z-index: 10;
+}
+
+/* Print styles for E-Tiket */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-ticket, #printable-ticket * {
+    visibility: visible;
+  }
+  #printable-ticket {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+  }
+}
