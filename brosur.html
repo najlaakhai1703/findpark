@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brosur FindPark — Smart Parking Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #008874;
+    --teal-dark: #006b5b;
+    --teal-light: #e6f6f3;
+    --orange: #fa5a00;
+    --orange-light: #fff3ec;
+    --dark: #0f172a;
+    --slate: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #d1d5db;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Print Controls ── */
+  .print-bar {
+    background: #1e293b;
+    color: white;
+    padding: 14px 32px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    width: 794px;
+    max-width: 100%;
+  }
+  .print-bar button {
+    background: #fa5a00;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    margin-left: auto;
+    transition: background 0.2s;
+  }
+  .print-bar button:hover { background: #e04f00; }
+
+  /* ── Page wrapper ── */
+  .brochure-page {
+    width: 794px;
+    background: white;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ═══════════════════════════════
+     PAGE 1 — FRONT COVER
+  ═══════════════════════════════ */
+  .cover {
+    min-height: 1123px;
+    background: linear-gradient(160deg, #003d35 0%, #006b5b 40%, #008874 70%, #00a896 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Decorative circles */
+  .cover::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+    top: -200px; right: -180px;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+    bottom: 60px; left: -120px;
+  }
+
+  .cover-dot-grid {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .cover-top {
+    padding: 40px 52px 0;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo-box {
+    background: white;
+    padding: 10px 18px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-img {
+    height: 36px;
+    object-fit: contain;
+  }
+
+  .logo-fallback {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--teal);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .logo-text {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--teal);
+    letter-spacing: -0.5px;
+  }
+
+  .cover-year {
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .cover-hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 52px 40px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cover-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(250,90,0,0.9);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    width: fit-content;
+  }
+
+  .cover-title {
+    font-size: 64px;
+    font-weight: 900;
+    color: white;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+  }
+
+  .cover-title span {
+    color: #fbbf24;
+  }
+
+  .cover-subtitle-line {
+    font-size: 32px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: -0.5px;
+    margin-bottom: 28px;
+  }
+
+  .cover-desc {
+    font-size: 16px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.7;
+    max-width: 460px;
+    margin-bottom: 44px;
+  }
+
+  .cover-stats {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+
+  .cover-stat {
+    text-align: center;
+  }
+
+  .cover-stat-num {
+    font-size: 36px;
+    font-weight: 800;
+    color: #fbbf24;
+    line-height: 1;
+    display: block;
+  }
+
+  .cover-stat-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  .cover-stat-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.2);
+    align-self: stretch;
+  }
+
+  .cover-cta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn-cover-primary {
+    background: #fa5a00;
+    color: white;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-cover-outline {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Visual parking grid illustration */
+  .cover-visual {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+  }
+
+  .parking-visual {
+    width: 280px;
+  }
+
+  .cover-bottom-strip {
+    background: rgba(0,0,0,0.3);
+    padding: 20px 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+  }
+
+  .cover-url {
+    color: rgba(255,255,255,0.8);
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cover-qr-placeholder {
+    width: 60px; height: 60px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+  }
+
+  /* ═══════════════════════════════
+     PAGE 2 — FEATURES
+  ═══════════════════════════════ */
+  .page-inner {
+    min-height: 1123px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-header {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+    padding: 32px 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .page-header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .page-header-logo-icon {
+    width: 32px; height: 32px;
+    background: white;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .page-header-logo-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.3px;
+  }
+
+  .page-header-title {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .page-body {
+    padding: 48px 52px;
+    flex: 1;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--slate);
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 520px;
+    margin-bottom: 36px;
+  }
+
+  /* Features Grid */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 48px;
+  }
+
+  .feature-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: var(--teal);
+    opacity: 0;
+  }
+
+  .feature-card.highlight::before {
+    opacity: 1;
+  }
+
+  .feature-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .feature-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--slate);
+    margin-bottom: 6px;
+  }
+
+  .feature-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Steps */
+  .steps-row {
+    display: flex;
+    gap: 0;
+    align-items: flex-start;
+    background: var(--teal-light);
+    border-radius: 16px;
+    padding: 28px 24px;
+  }
+
+  .step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    padding: 0 12px;
+  }
+
+  .step::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: 18px;
+    font-size: 20px;
+    color: var(--teal);
+    font-weight: 700;
+  }
+
+  .step:last-child::after { display: none; }
+
+  .step-num {
+    width: 40px; height: 40px;
+    background: var(--teal);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0 auto 10px;
+  }
+
+  .step-icon { font-size: 24px; margin-bottom: 8px; }
+
+  .step-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--slate);
+    margin-bottom: 4px;
+  }
+
+  .step-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ═══════════════════════════════
+     PAGE 3 — PRICING + LOCATIONS
+  ═══════════════════════════════ */
+  .pricing-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .pricing-card {
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .pricing-card.popular {
+    border-color: var(--teal);
+    transform: scale(1.03);
+    box-shadow: 0 8px 24px rgba(0,136,116,0.15);
+  }
+
+  .pricing-badge {
+    position: absolute;
+    top: 12px; right: 12px;
+    background: var(--orange);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .pricing-head {
+    background: var(--teal);
+    padding: 22px 20px 16px;
+    text-align: center;
+  }
+
+  .pricing-card.lite .pricing-head { background: var(--slate); }
+  .pricing-card.ev .pricing-head { background: linear-gradient(135deg, #1d4ed8, #6366f1); }
+
+  .pricing-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .pricing-price {
+    font-size: 32px;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+  }
+
+  .pricing-price sub {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.75;
+    vertical-align: bottom;
+    margin-bottom: 2px;
+  }
+
+  .pricing-body {
+    padding: 18px 20px 22px;
+  }
+
+  .pricing-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--slate);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .pricing-check {
+    color: var(--teal);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Locations */
+  .locations-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .location-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .location-icon {
+    width: 44px; height: 44px;
+    background: var(--teal-light);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .location-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--slate);
+    margin-bottom: 2px;
+  }
+
+  .location-info {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .location-badge {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-top: 4px;
+  }
+
+  /* ═══════════════════════════════
+     PAGE 4 — BACK COVER
+  ═══════════════════════════════ */
+  .back-cover {
+    min-height: 1123px;
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .back-cover::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: rgba(0,136,116,0.12);
+    top: -150px; right: -150px;
+  }
+
+  .back-cover::after {
+    content: '';
+    position: absolute;
+    width: 350px; height: 350px;
+    border-radius: 50%;
+    background: rgba(250,90,0,0.08);
+    bottom: 100px; left: -100px;
+  }
+
+  .back-top {
+    padding: 48px 52px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .back-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+
+  .back-logo-icon {
+    width: 52px; height: 52px;
+    background: var(--teal);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+
+  .back-logo-name {
+    font-size: 28px;
+    font-weight: 900;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+
+  .back-logo-tag {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .back-tagline {
+    font-size: 44px;
+    font-weight: 900;
+    color: white;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+  }
+
+  .back-tagline span { color: #fbbf24; }
+
+  .back-sub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 52px;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .contact-item {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .contact-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .contact-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .contact-value {
+    font-size: 14px;
+    color: white;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .back-footer {
+    background: rgba(0,0,0,0.4);
+    padding: 24px 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+  }
+
+  .back-footer-left {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+  }
+
+  .back-footer-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .social-chip {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Decorative parking slots SVG */
+  .slot-deco {
+    position: absolute;
+    right: 40px;
+    bottom: 120px;
+    opacity: 0.12;
+    z-index: 1;
+  }
+
+  /* Page separator label */
+  .page-label {
+    background: #374151;
+    color: #9ca3af;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    text-align: center;
+    width: fit-content;
+    margin: 0 auto;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: white; padding: 0; gap: 0; }
+    .print-bar { display: none; }
+    .brochure-page { box-shadow: none; border-radius: 0; page-break-after: always; }
+    .page-label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Print Bar -->
+<div class="print-bar">
+  <span>🖨️ FindPark Brochure — Siap Print (A4 · 4 halaman)</span>
+  <button onclick="window.print()">🖨️ Print / Save PDF</button>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 1 — COVER
+══════════════════════════════════════ -->
+<div class="page-label">📄 Halaman 1 — Cover Depan</div>
+<div class="brochure-page">
+  <div class="cover">
+    <div class="cover-dot-grid"></div>
+
+    <!-- Header -->
+    <div class="cover-top">
+      <div class="logo-box">
+        <img src="assets/images/logo-cropped.jpg" class="logo-img" alt="FindPark Logo"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+        <div class="logo-fallback" style="display:none">
+          <div class="logo-icon">🅿️</div>
+          <span class="logo-text">FindPark</span>
+        </div>
+      </div>
+      <div class="cover-year">Smart Parking Solutions · Semarang 2026</div>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="cover-hero">
+      <div class="cover-eyebrow">🚀 Platform Parkir Terdepan di Semarang</div>
+
+      <div class="cover-title">Find<span>Park</span></div>
+      <div class="cover-subtitle-line">Smart Parking Solutions</div>
+
+      <p class="cover-desc">
+        Reservasi parkir real-time, navigasi ke slot otomatis, dan tiket digital
+        di 48+ mall &amp; gedung parkir Semarang. Tidak perlu keliling mencari —
+        cukup satu klik, parkir beres.
+      </p>
+
+      <div class="cover-stats">
+        <div class="cover-stat">
+          <span class="cover-stat-num">48+</span>
+          <span class="cover-stat-label">Lokasi Parkir</span>
+        </div>
+        <div class="cover-stat-divider"></div>
+        <div class="cover-stat">
+          <span class="cover-stat-num">1.200+</span>
+          <span class="cover-stat-label">Slot Tersedia</span>
+        </div>
+        <div class="cover-stat-divider"></div>
+        <div class="cover-stat">
+          <span class="cover-stat-num">24/7</span>
+          <span class="cover-stat-label">Layanan Aktif</span>
+        </div>
+        <div class="cover-stat-divider"></div>
+        <div class="cover-stat">
+          <span class="cover-stat-num">98%</span>
+          <span class="cover-stat-label">Kepuasan User</span>
+        </div>
+      </div>
+
+      <div class="cover-cta">
+        <a class="btn-cover-primary" href="#">🔍 Cari Parkir Sekarang</a>
+        <a class="btn-cover-outline" href="#">📱 Download App</a>
+      </div>
+    </div>
+
+    <!-- Parking Illustration -->
+    <div class="cover-visual">
+      <svg class="parking-visual" viewBox="0 0 280 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Road lines -->
+        <rect x="10" y="10" width="260" height="300" rx="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+        <!-- Parking slots grid -->
+        <!-- Row 1 -->
+        <rect x="24" y="28" width="54" height="80" rx="6" fill="rgba(16,185,129,0.3)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="51" y="64" fill="#10b981" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">A-01</text>
+        <text x="51" y="78" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">KOSONG</text>
+
+        <rect x="86" y="28" width="54" height="80" rx="6" fill="rgba(239,68,68,0.3)" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="113" y="64" fill="#ef4444" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">A-02</text>
+        <text x="113" y="78" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">TERISI</text>
+        <!-- Car icon in slot -->
+        <text x="113" y="55" fill="rgba(255,255,255,0.4)" font-size="18" text-anchor="middle">🚗</text>
+
+        <rect x="148" y="28" width="54" height="80" rx="6" fill="rgba(245,158,11,0.3)" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="175" y="64" fill="#f59e0b" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">A-03</text>
+        <text x="175" y="78" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">RESERVED</text>
+
+        <rect x="210" y="28" width="54" height="80" rx="6" fill="rgba(16,185,129,0.3)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="237" y="64" fill="#10b981" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">A-04</text>
+        <text x="237" y="78" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">KOSONG</text>
+
+        <!-- Lane -->
+        <rect x="10" y="116" width="260" height="18" fill="rgba(255,255,255,0.04)"/>
+        <line x1="10" y1="125" x2="270" y2="125" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="12,8"/>
+
+        <!-- Row 2 -->
+        <rect x="24" y="142" width="54" height="80" rx="6" fill="rgba(16,185,129,0.3)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="51" y="184" fill="#10b981" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">B-01</text>
+        <text x="51" y="198" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">KOSONG</text>
+
+        <rect x="86" y="142" width="54" height="80" rx="6" fill="rgba(16,185,129,0.3)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="113" y="178" fill="#10b981" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">B-02</text>
+        <text x="113" y="168" fill="rgba(255,255,255,0.4)" font-size="18" text-anchor="middle">⭐</text>
+        <text x="113" y="192" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">BOOKED</text>
+
+        <rect x="148" y="142" width="54" height="80" rx="6" fill="rgba(239,68,68,0.3)" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="175" y="178" fill="#ef4444" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">B-03</text>
+        <text x="175" y="168" fill="rgba(255,255,255,0.4)" font-size="18" text-anchor="middle">🚙</text>
+        <text x="175" y="192" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">TERISI</text>
+
+        <rect x="210" y="142" width="54" height="80" rx="6" fill="rgba(99,102,241,0.3)" stroke="#818cf8" stroke-width="1.5"/>
+        <text x="237" y="178" fill="#818cf8" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">B-04</text>
+        <text x="237" y="168" fill="rgba(255,255,255,0.4)" font-size="18" text-anchor="middle">⚡</text>
+        <text x="237" y="192" fill="rgba(255,255,255,0.5)" font-size="8" text-anchor="middle">EV ZONE</text>
+
+        <!-- Lane 2 -->
+        <rect x="10" y="230" width="260" height="18" fill="rgba(255,255,255,0.04)"/>
+        <line x1="10" y1="239" x2="270" y2="239" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="12,8"/>
+
+        <!-- Row 3 partial -->
+        <rect x="24" y="256" width="54" height="50" rx="6" fill="rgba(16,185,129,0.3)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="51" y="286" fill="#10b981" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">C-01</text>
+
+        <rect x="86" y="256" width="54" height="50" rx="6" fill="rgba(16,185,129,0.3)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="113" y="286" fill="#10b981" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">C-02</text>
+
+        <rect x="148" y="256" width="54" height="50" rx="6" fill="rgba(239,68,68,0.3)" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="175" y="281" fill="#ef4444" font-size="18" text-anchor="middle">🚗</text>
+
+        <rect x="210" y="256" width="54" height="50" rx="6" fill="rgba(16,185,129,0.3)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="237" y="286" fill="#10b981" font-size="10" font-weight="700" text-anchor="middle" font-family="monospace">C-04</text>
+
+        <!-- Legend -->
+        <circle cx="30" cy="318" r="5" fill="#10b981"/>
+        <text x="40" y="322" fill="rgba(255,255,255,0.6)" font-size="9">Kosong</text>
+        <circle cx="90" cy="318" r="5" fill="#ef4444"/>
+        <text x="100" y="322" fill="rgba(255,255,255,0.6)" font-size="9">Terisi</text>
+        <circle cx="145" cy="318" r="5" fill="#f59e0b"/>
+        <text x="155" y="322" fill="rgba(255,255,255,0.6)" font-size="9">Reserved</text>
+        <circle cx="210" cy="318" r="5" fill="#818cf8"/>
+        <text x="220" y="322" fill="rgba(255,255,255,0.6)" font-size="9">EV Zone</text>
+      </svg>
+    </div>
+
+    <!-- Bottom Strip -->
+    <div class="cover-bottom-strip">
+      <div class="cover-url">
+        🌐 <strong>findpark.netlify.app</strong>
+      </div>
+      <div style="display:flex;gap:20px;align-items:center;">
+        <span style="color:rgba(255,255,255,0.5);font-size:13px;">📍 Semarang, Jawa Tengah</span>
+        <div class="cover-qr-placeholder">🔗</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — FITUR & CARA KERJA
+══════════════════════════════════════ -->
+<div class="page-label">📄 Halaman 2 — Fitur & Cara Kerja</div>
+<div class="brochure-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-header-logo">
+        <div class="page-header-logo-icon">🅿️</div>
+        <div>
+          <div class="page-header-logo-name">FindPark</div>
+        </div>
+      </div>
+      <div class="page-header-title">Fitur Unggulan & Cara Kerja</div>
+    </div>
+
+    <div class="page-body">
+      <!-- Features -->
+      <div class="section-eyebrow">✦ Mengapa FindPark?</div>
+      <div class="section-title">Teknologi Parkir <br>Masa Depan, Hari Ini</div>
+      <p class="section-desc">FindPark menggabungkan AI, sensor real-time, dan kemudahan digital untuk pengalaman parkir yang benar-benar tanpa ribet.</p>
+
+      <div class="features-grid">
+        <div class="feature-card highlight">
+          <span class="feature-icon">🗺️</span>
+          <div class="feature-title">Peta Real-Time</div>
+          <div class="feature-desc">Lihat slot tersedia secara langsung di peta interaktif. Sensor IoT update setiap 30 detik.</div>
+        </div>
+        <div class="feature-card highlight">
+          <span class="feature-icon">📱</span>
+          <div class="feature-title">Booking Online</div>
+          <div class="feature-desc">Reservasi slot dari rumah. Bayar sebelum berangkat, langsung masuk tanpa antri.</div>
+        </div>
+        <div class="feature-card highlight">
+          <span class="feature-icon">🤖</span>
+          <div class="feature-title">ANPR Otomatis</div>
+          <div class="feature-desc">Kamera AI mengenali plat nomor otomatis. Palang terbuka sendiri — tanpa tiket fisik.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🎫</span>
+          <div class="feature-title">E-Tiket Digital</div>
+          <div class="feature-desc">Tiket QR Code langsung di HP. Bisa di-share via WhatsApp atau simpan sebagai PDF.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🔍</span>
+          <div class="feature-title">Find My Car</div>
+          <div class="feature-desc">Lupa parkir di mana? Radar navigasi menunjukkan lokasi kendaraanmu secara akurat.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">⚡</span>
+          <div class="feature-title">EV Charging</div>
+          <div class="feature-desc">Stasiun pengisian kendaraan listrik terintegrasi di berbagai lokasi parkir mitra.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🆘</span>
+          <div class="feature-title">Bantuan SOS</div>
+          <div class="feature-desc">Tombol darurat 1-klik untuk memanggil security atau CS 24/7 langsung dari aplikasi.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">🏷️</span>
+          <div class="feature-title">Langganan Pass</div>
+          <div class="feature-desc">Paket bulanan hemat untuk pengguna rutin. Akses unlimited di semua mitra mall.</div>
+        </div>
+        <div class="feature-card">
+          <span class="feature-icon">📊</span>
+          <div class="feature-title">Riwayat Lengkap</div>
+          <div class="feature-desc">Semua transaksi tersimpan rapi. Lihat histori parkir, tagihan, dan receipt digital.</div>
+        </div>
+      </div>
+
+      <!-- How It Works -->
+      <div class="section-eyebrow" style="margin-top:4px;">✦ Cara Pakai</div>
+      <div class="section-title" style="font-size:22px;margin-bottom:20px;">3 Langkah Mudah</div>
+
+      <div class="steps-row">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-icon">🔍</div>
+          <div class="step-title">Cari & Pilih</div>
+          <div class="step-desc">Buka FindPark, cari mall atau area parkir favoritmu, lihat slot tersedia di peta.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-icon">📅</div>
+          <div class="step-title">Booking & Bayar</div>
+          <div class="step-desc">Pilih slot, tentukan durasi, pilih metode bayar (GoPay, OVO, QRIS, dll).</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-icon">🚗</div>
+          <div class="step-title">Langsung Masuk</div>
+          <div class="step-desc">Tunjukkan QR Code atau biarkan kamera AI membaca plat nomor kamu otomatis.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-icon">✅</div>
+          <div class="step-title">Parkir Beres!</div>
+          <div class="step-desc">Nikmati aktivitasmu. Notif reminder 15 menit sebelum waktu parkir habis.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer strip -->
+    <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:16px 52px;display:flex;justify-content:space-between;align-items:center;margin-top:auto;">
+      <span style="font-size:12px;color:#94a3b8;">FindPark Smart Parking Solutions</span>
+      <span style="font-size:12px;color:#94a3b8;">findpark.netlify.app</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 3 — HARGA & LOKASI
+══════════════════════════════════════ -->
+<div class="page-label">📄 Halaman 3 — Harga & Lokasi</div>
+<div class="brochure-page">
+  <div class="page-inner">
+    <div class="page-header">
+      <div class="page-header-logo">
+        <div class="page-header-logo-icon">🅿️</div>
+        <div>
+          <div class="page-header-logo-name">FindPark</div>
+        </div>
+      </div>
+      <div class="page-header-title">Paket Langganan & Lokasi</div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- Pricing -->
+      <div class="section-eyebrow">✦ Harga Transparan</div>
+      <div class="section-title">Paket Langganan Pass</div>
+      <p class="section-desc">Hemat lebih banyak dengan berlangganan. Akses unlimited, tidak perlu bayar per kunjungan.</p>
+
+      <div class="pricing-cards">
+        <div class="pricing-card lite">
+          <div class="pricing-head">
+            <div class="pricing-name">DP Mall Pass</div>
+            <div class="pricing-price">Rp 250k<sub>/bulan</sub></div>
+          </div>
+          <div class="pricing-body">
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Akses DP Mall & sekitarnya</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Hingga 30 kunjungan/bulan</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> E-tiket digital</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Priority slot area A</div>
+            <div class="pricing-feature" style="color:#94a3b8;"><span>—</span> &nbsp;EV Charging</div>
+            <div class="pricing-feature" style="color:#94a3b8;"><span>—</span> &nbsp;Multi-mall akses</div>
+          </div>
+        </div>
+
+        <div class="pricing-card popular">
+          <div class="pricing-badge">TERLARIS</div>
+          <div class="pricing-head">
+            <div class="pricing-name">All-Mall Pass</div>
+            <div class="pricing-price">Rp 350k<sub>/bulan</sub></div>
+          </div>
+          <div class="pricing-body">
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Akses semua 48+ lokasi</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Kunjungan unlimited</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> E-tiket & receipt digital</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Priority slot di semua mall</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Diskon car wash 20%</div>
+            <div class="pricing-feature" style="color:#94a3b8;"><span>—</span> &nbsp;EV Charging unlimited</div>
+          </div>
+        </div>
+
+        <div class="pricing-card ev">
+          <div class="pricing-head" style="background:linear-gradient(135deg,#1d4ed8,#6366f1)">
+            <div class="pricing-name">⚡ EV Unlimited</div>
+            <div class="pricing-price">Rp 450k<sub>/bulan</sub></div>
+          </div>
+          <div class="pricing-body">
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Semua fitur All-Mall Pass</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> EV Charging unlimited</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Slot EV priority</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Asuransi kendaraan inklusif</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> Car wash gratis 4x/bulan</div>
+            <div class="pricing-feature"><span class="pricing-check">✓</span> CS premium 24/7</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarif Reguler -->
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px 24px;margin-bottom:36px;display:flex;gap:40px;align-items:center;">
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:6px;">Tarif Reguler (Tanpa Langganan)</div>
+          <div style="font-size:13px;color:#64748b;line-height:1.7;">
+            Mobil: <strong style="color:#1e293b;">Rp 5.000</strong> jam pertama · <strong style="color:#1e293b;">Rp 3.000</strong>/jam berikutnya<br>
+            Motor: <strong style="color:#1e293b;">Rp 2.000</strong> jam pertama · <strong style="color:#1e293b;">Rp 1.000</strong>/jam berikutnya<br>
+            EV:&nbsp;&nbsp;&nbsp;&nbsp;<strong style="color:#1e293b;">Rp 5.000</strong> + charging Rp 2.500/kWh
+          </div>
+        </div>
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-size:32px;font-weight:900;color:#008874;">Gratis</div>
+          <div style="font-size:12px;color:#64748b;">Download App</div>
+        </div>
+      </div>
+
+      <!-- Locations -->
+      <div class="section-eyebrow">✦ Lokasi Mitra</div>
+      <div class="section-title" style="font-size:22px;margin-bottom:20px;">Mall & Gedung Parkir di Semarang</div>
+
+      <div class="locations-grid">
+        <div class="location-card">
+          <div class="location-icon">🏬</div>
+          <div>
+            <div class="location-name">DP Mall Semarang</div>
+            <div class="location-info">Jl. Pemuda No. 150 · Lantai B1–B3<br>1.200 slot · Buka 08.00–22.00</div>
+            <span class="location-badge">✅ EV Charging</span>
+          </div>
+        </div>
+        <div class="location-card">
+          <div class="location-icon">🏛️</div>
+          <div>
+            <div class="location-name">Paragon City Mall</div>
+            <div class="location-info">Jl. Pemuda No. 118 · Lantai LG–3<br>850 slot · Buka 10.00–22.00</div>
+            <span class="location-badge">✅ VIP Zone</span>
+          </div>
+        </div>
+        <div class="location-card">
+          <div class="location-icon">🎪</div>
+          <div>
+            <div class="location-name">Java Mall</div>
+            <div class="location-info">Jl. MT Haryono No. 992–994<br>600 slot · Buka 09.00–21.00</div>
+            <span class="location-badge">✅ Tersedia</span>
+          </div>
+        </div>
+        <div class="location-card">
+          <div class="location-icon">🏢</div>
+          <div>
+            <div class="location-name">Simpang Lima Plaza</div>
+            <div class="location-info">Jl. Pahlawan No.1, Semarang<br>400 slot · Buka 08.00–23.00</div>
+            <span class="location-badge">✅ EV Charging</span>
+          </div>
+        </div>
+        <div class="location-card">
+          <div class="location-icon">🎢</div>
+          <div>
+            <div class="location-name">Trans Studio Mall</div>
+            <div class="location-info">Jl. Jend. Sudirman No.1<br>980 slot · Buka 10.00–22.00</div>
+            <span class="location-badge">✅ Tersedia</span>
+          </div>
+        </div>
+        <div class="location-card">
+          <div class="location-icon">🌆</div>
+          <div>
+            <div class="location-name">+43 Lokasi Lainnya</div>
+            <div class="location-info">Gedung perkantoran, hotel, kampus,<br>dan area publik se-Semarang</div>
+            <span class="location-badge">🗺️ Lihat Peta</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:16px 52px;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:12px;color:#94a3b8;">*Harga dapat berubah sewaktu-waktu. Cek app untuk tarif terkini.</span>
+      <span style="font-size:12px;color:#94a3b8;">findpark.netlify.app</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 4 — BACK COVER
+══════════════════════════════════════ -->
+<div class="page-label">📄 Halaman 4 — Cover Belakang</div>
+<div class="brochure-page">
+  <div class="back-cover">
+
+    <!-- Decorative slots -->
+    <div class="slot-deco">
+      <svg width="300" height="400" viewBox="0 0 300 400">
+        <rect x="0" y="0" width="68" height="100" rx="8" fill="white" opacity="0.4"/>
+        <rect x="78" y="0" width="68" height="100" rx="8" fill="white" opacity="0.2"/>
+        <rect x="156" y="0" width="68" height="100" rx="8" fill="white" opacity="0.3"/>
+        <rect x="234" y="0" width="68" height="100" rx="8" fill="white" opacity="0.15"/>
+        <rect x="0" y="120" width="68" height="100" rx="8" fill="white" opacity="0.15"/>
+        <rect x="78" y="120" width="68" height="100" rx="8" fill="white" opacity="0.35"/>
+        <rect x="156" y="120" width="68" height="100" rx="8" fill="white" opacity="0.2"/>
+        <rect x="234" y="120" width="68" height="100" rx="8" fill="white" opacity="0.1"/>
+        <rect x="0" y="240" width="68" height="100" rx="8" fill="white" opacity="0.25"/>
+        <rect x="78" y="240" width="68" height="100" rx="8" fill="white" opacity="0.1"/>
+        <rect x="156" y="240" width="68" height="100" rx="8" fill="white" opacity="0.3"/>
+        <rect x="234" y="240" width="68" height="100" rx="8" fill="white" opacity="0.2"/>
+      </svg>
+    </div>
+
+    <div class="back-top">
+      <!-- Logo -->
+      <div class="back-logo">
+        <div class="back-logo-icon">🅿️</div>
+        <div>
+          <div class="back-logo-name">FindPark</div>
+          <div class="back-logo-tag">Smart Parking Solutions</div>
+        </div>
+      </div>
+
+      <!-- Tagline -->
+      <div class="back-tagline">
+        Parkir Cerdas,<br>
+        <span>Tanpa Ribet.</span>
+      </div>
+
+      <p class="back-sub">
+        Bergabung bersama ribuan pengguna yang sudah menikmati kemudahan parkir
+        di Semarang. Reservasi real-time, masuk tanpa tiket, bayar digital —
+        semua dalam satu platform.
+      </p>
+
+      <!-- Contact Info -->
+      <div class="contact-grid">
+        <div class="contact-item">
+          <div class="contact-icon">🌐</div>
+          <div>
+            <div class="contact-label">Website</div>
+            <div class="contact-value">findpark.netlify.app</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📧</div>
+          <div>
+            <div class="contact-label">Email</div>
+            <div class="contact-value">hello@findpark.id</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📱</div>
+          <div>
+            <div class="contact-label">WhatsApp CS</div>
+            <div class="contact-value">+62 812-3456-7890</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-label">Kantor Pusat</div>
+            <div class="contact-value">Semarang, Jawa Tengah<br>Indonesia</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- App Download Chips -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">📱</span>
+          <div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.06em;">Download di</div>
+            <div style="font-size:15px;font-weight:700;color:white;">App Store</div>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">🤖</span>
+          <div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.06em;">Download di</div>
+            <div style="font-size:15px;font-weight:700;color:white;">Google Play</div>
+          </div>
+        </div>
+        <div style="background:rgba(250,90,0,0.15);border:1px solid rgba(250,90,0,0.3);border-radius:12px;padding:12px 20px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:24px;">🌐</span>
+          <div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.06em;">Akses via</div>
+            <div style="font-size:15px;font-weight:700;color:#fa5a00;">Browser Web</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="back-footer">
+      <div class="back-footer-left">© 2026 FindPark. All rights reserved. · Semarang, Indonesia</div>
+      <div class="back-footer-right">
+        <div class="social-chip">📘 FindPark</div>
+        <div class="social-chip">📷 @findpark.id</div>
+        <div class="social-chip">🐦 @findpark</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

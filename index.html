@@ -48,11 +48,11 @@
             <img src="assets/images/logo-cropped.jpg" alt="FindPark - FAST TRACKER AREA" class="h-10 sm:h-11 w-auto object-contain group-hover:scale-105 transition" />
           </div>
 
-          <!-- City Selector -->
-          <button class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 transition shrink-0">
-            <i class="fa-solid fa-location-dot text-[#008874]"></i>
-            <span>Semarang</span>
-            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+          <!-- City Selector Button (Indonesia Wide Modal) -->
+          <button id="navbar-city-btn" onclick="openCityModal()" type="button" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 active:scale-95 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 transition shrink-0 cursor-pointer shadow-xs group" title="Pilih Kota di Seluruh Indonesia">
+            <i class="fa-solid fa-location-dot text-[#008874] group-hover:animate-bounce"></i>
+            <span id="navbar-current-city">Semarang</span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-slate-600 transition"></i>
           </button>
 
           <!-- Clean Search Bar -->
@@ -283,11 +283,23 @@
                 <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
                   <i class="fa-solid fa-map-pin text-[#008874]"></i> Kota Tujuan
                 </label>
-                <select id="hero-search-city" class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#008874] focus:bg-white transition">
-                  <option selected value="Semarang">Semarang</option>
-                  <option value="Jakarta">Jakarta</option>
-                  <option value="Bandung">Bandung</option>
-                  <option value="Surabaya">Surabaya</option>
+                <select id="hero-search-city" onchange="setCity(this.value)" class="w-full h-11 bg-slate-50 border border-slate-200 rounded-xl px-3 text-xs font-bold text-slate-800 focus:outline-none focus:border-[#008874] focus:bg-white transition cursor-pointer">
+                  <option value="Seluruh Indonesia">🇮🇩 Seluruh Indonesia</option>
+                  <option selected value="Semarang">Semarang (Jawa Tengah)</option>
+                  <option value="Jakarta">Jakarta (DKI Jakarta)</option>
+                  <option value="Surabaya">Surabaya (Jawa Timur)</option>
+                  <option value="Bandung">Bandung (Jawa Barat)</option>
+                  <option value="Yogyakarta">Yogyakarta (D.I. Yogyakarta)</option>
+                  <option value="Bali">Bali / Denpasar (Bali)</option>
+                  <option value="Medan">Medan (Sumatera Utara)</option>
+                  <option value="Makassar">Makassar (Sulawesi Selatan)</option>
+                  <option value="Solo">Solo / Surakarta (Jawa Tengah)</option>
+                  <option value="Malang">Malang (Jawa Timur)</option>
+                  <option value="Balikpapan">Balikpapan & IKN</option>
+                  <option value="Palembang">Palembang (Sumsel)</option>
+                  <option value="Tangerang">Tangerang & Tangsel</option>
+                  <option value="Bekasi">Bekasi</option>
+                  <option value="Bogor">Bogor</option>
                 </select>
               </div>
 
@@ -349,15 +361,15 @@
           <div class="flex items-center justify-between mb-8">
             <div>
               <span class="text-xs font-extrabold text-orange-600 uppercase tracking-wider">Rekomendasi Terdekat</span>
-              <h2 class="text-2xl font-black text-slate-900 mt-1">Pilihan Slot Parkir Populer Semarang</h2>
+              <h2 id="home-popular-city-title" class="text-2xl font-black text-slate-900 mt-1">Pilihan Slot Parkir Populer Semarang</h2>
             </div>
-            <button onclick="navigateTo('page-explore')" class="text-xs font-bold text-[#008874] hover:underline flex items-center gap-1">
-              Lihat Semua 36 Lokasi <i class="fa-solid fa-chevron-right text-[10px]"></i>
+            <button onclick="navigateTo('page-explore')" class="text-xs font-bold text-[#008874] hover:underline flex items-center gap-1 cursor-pointer">
+              Lihat Semua Lokasi di Indonesia <i class="fa-solid fa-chevron-right text-[10px]"></i>
             </button>
           </div>
 
-          <!-- 4 Cards Grid from Image 2 -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <!-- Dynamic Cards Grid -->
+          <div id="home-popular-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             
             <!-- Card 1: DP Mall -->
             <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition group">
@@ -732,11 +744,11 @@
             
             <!-- Filters Group -->
             <div class="flex flex-wrap items-center gap-2">
-              <!-- Area Kota -->
-              <button class="flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 transition">
-                <i class="fa-solid fa-map text-[#008874]"></i>
-                <span>Semarang Kota</span>
-                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+              <!-- Area Kota Selector -->
+              <button onclick="openCityModal()" type="button" class="flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 transition cursor-pointer shadow-xs group" title="Ganti Kota">
+                <i class="fa-solid fa-map text-[#008874] group-hover:scale-110 transition"></i>
+                <span id="explore-current-city-label">Semarang Kota</span>
+                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-slate-700 transition"></i>
               </button>
 
               <!-- Jadwal Kedatangan -->
@@ -796,7 +808,7 @@
             <div class="flex items-center justify-between mb-3">
               <div>
                 <span class="text-[10px] font-extrabold uppercase text-slate-400">Hasil Terdekat</span>
-                <h3 class="text-base font-black text-slate-900">Spot Parkir Tersedia di Semarang</h3>
+                <h3 id="explore-spots-heading" class="text-base font-black text-slate-900">Spot Parkir Tersedia di Semarang</h3>
               </div>
               <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 flex items-center gap-1">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live 4 Lokasi
@@ -2596,6 +2608,70 @@
       <button onclick="closeEvChargingModal()" class="w-full py-3 bg-[#008874] hover:bg-[#006c5c] text-white font-extrabold text-xs rounded-xl shadow-md transition">
         Selesai / Putuskan Koneksi
       </button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: PILIH KOTA SELURUH INDONESIA        -->
+  <!-- ========================================== -->
+  <div id="city-selector-modal" class="hidden fixed inset-0 z-50 items-center justify-center p-3 sm:p-5 bg-slate-950/70 backdrop-blur-sm animate-fade-in">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-100 relative">
+      
+      <!-- Modal Header -->
+      <div class="p-5 sm:p-6 border-b border-slate-100 flex items-start justify-between bg-gradient-to-r from-teal-50/40 via-white to-orange-50/30">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-black uppercase tracking-wider text-[#008874] flex items-center gap-1.5">
+              <i class="fa-solid fa-earth-asia"></i> Cakupan Nasional
+            </span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-orange-100 text-orange-700">
+              🇮🇩 34+ Kota
+            </span>
+          </div>
+          <h3 class="text-xl sm:text-2xl font-black text-slate-900">Pilih Kota di Seluruh Indonesia</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Pilih kota tujuan Anda untuk melihat slot parkir pintar & tarif real-time</p>
+        </div>
+        <button onclick="closeCityModal()" type="button" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition cursor-pointer shrink-0">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Search & GPS Toolbar -->
+      <div class="px-5 sm:px-6 pt-4 pb-2 bg-slate-50/50 border-b border-slate-100 space-y-3">
+        <!-- Live Search Bar -->
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+          <input id="city-search-input" type="text" placeholder="Ketik nama kota atau provinsi (cth: Jakarta, Bandung, Surabaya, Bali, Medan...)" oninput="handleCitySearchInput(this.value)" class="w-full pl-9 pr-24 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#008874] focus:ring-2 focus:ring-teal-100 transition shadow-xs" />
+          <button onclick="useCurrentGpsLocation()" type="button" class="absolute right-1.5 top-1.5 bottom-1.5 px-2.5 bg-teal-50 hover:bg-teal-100 active:scale-95 text-[#008874] text-[11px] font-extrabold rounded-lg flex items-center gap-1.5 transition cursor-pointer border border-teal-200" title="Deteksi kota via GPS">
+            <i class="fa-solid fa-crosshairs text-[10px]"></i>
+            <span class="hidden sm:inline">GPS Auto</span>
+          </button>
+        </div>
+
+        <!-- Region Filter Pills -->
+        <div id="city-region-tabs" class="flex items-center gap-1.5 overflow-x-auto pb-2 text-xs scrollbar-none">
+          <!-- Rendered via JS renderCityRegionTabs() -->
+        </div>
+      </div>
+
+      <!-- City Cards Grid (Scrollable) -->
+      <div class="p-5 sm:p-6 overflow-y-auto flex-1 max-h-[50vh]">
+        <div id="city-modal-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <!-- Rendered dynamically via JS renderCityModalCards() -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 sensor-live-indicator"></span>
+          <span>Sensor IoT & ANPR Camera aktif di seluruh kota mitra</span>
+        </div>
+        <button onclick="closeCityModal()" type="button" class="text-xs font-bold text-slate-600 hover:text-slate-900 cursor-pointer">
+          Tutup
+        </button>
+      </div>
+
     </div>
   </div>
 

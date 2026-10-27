@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initApp() {
   renderActiveVehicleBadges();
   renderSpotsList();
+  renderHomePopularCards();
   renderVehiclesInBooking();
   updateBookingSummary();
   initEventListeners();
@@ -124,21 +125,30 @@ function handleHeroSearch(e) {
   
   const mallInput = document.getElementById('hero-search-mall');
   const query = (mallInput ? mallInput.value : '').trim().toLowerCase();
-  const city = document.getElementById('hero-search-city')?.value || 'Semarang';
+  const city = document.getElementById('hero-search-city')?.value || FindParkStore.currentCity || 'Semarang';
   const time = document.getElementById('hero-search-time')?.value || '13:00';
   
   // Update booking time
   FindParkStore.currentBooking.time = time;
 
-  // Search matching mall
-  let matchedSpot = FindParkStore.spots.find(s => 
+  // Sync current city if selected in dropdown
+  if (city !== FindParkStore.currentCity) {
+    setCity(city, false);
+  }
+
+  // Search matching mall across spots in selected city or all
+  const pool = (city === 'Semua' || city === 'Seluruh Indonesia')
+    ? FindParkStore.spots
+    : FindParkStore.spots.filter(s => s.city.toLowerCase() === city.toLowerCase());
+
+  let matchedSpot = (pool.length > 0 ? pool : FindParkStore.spots).find(s => 
     s.name.toLowerCase().includes(query) || 
     s.address.toLowerCase().includes(query) ||
     s.area.toLowerCase().includes(query)
   );
 
   if (!matchedSpot) {
-    matchedSpot = FindParkStore.spots[0]; // default to DP Mall
+    matchedSpot = pool[0] || FindParkStore.spots[0];
   }
 
   // Button visual click feedback
@@ -181,19 +191,24 @@ function handleNavbarSearch() {
   const matchedSpot = FindParkStore.spots.find(s => 
     s.name.toLowerCase().includes(q) || 
     s.address.toLowerCase().includes(q) ||
-    s.area.toLowerCase().includes(q)
+    s.area.toLowerCase().includes(q) ||
+    s.city.toLowerCase().includes(q)
   );
 
   if (matchedSpot) {
+    // If matched spot is from another city, auto-switch to that city
+    if (matchedSpot.city.toLowerCase() !== (FindParkStore.currentCity || '').toLowerCase()) {
+      setCity(matchedSpot.city, false);
+    }
     selectSpotFromMap(matchedSpot.id);
     navigateTo('page-explore');
     
     const exploreInput = document.getElementById('explore-search-input');
     if (exploreInput) exploreInput.value = q;
 
-    showToast(`📍 Menampilkan ${matchedSpot.name} (Tersedia ${matchedSpot.availableSlots} slot)`);
+    showToast(`📍 Menampilkan ${matchedSpot.name} di ${matchedSpot.city} (${matchedSpot.availableSlots} slot tersedia)`);
   } else {
-    showToast(`Tidak ditemukan lokasi spesifik "${q}". Menampilkan semua mall di Semarang.`);
+    showToast(`Tidak ditemukan lokasi spesifik "${q}". Menampilkan semua hasil di ${FindParkStore.currentCity}.`);
     navigateTo('page-explore');
   }
 }
@@ -203,11 +218,21 @@ function handleExploreSearch(query) {
   const exploreContainer = document.getElementById('explore-spots-list');
   if (!exploreContainer) return;
 
-  const filtered = FindParkStore.spots.filter(s => 
+  const currentCity = FindParkStore.currentCity || 'Semarang';
+  const isAll = currentCity === 'Semua' || currentCity === 'Seluruh Indonesia';
+
+  const baseSpots = isAll
+    ? FindParkStore.spots
+    : FindParkStore.spots.filter(s => s.city.toLowerCase() === currentCity.toLowerCase());
+
+  const pool = baseSpots.length > 0 ? baseSpots : FindParkStore.spots;
+
+  const filtered = pool.filter(s => 
     s.name.toLowerCase().includes(q) || 
     s.address.toLowerCase().includes(q) || 
     s.slotCode.toLowerCase().includes(q) ||
-    s.area.toLowerCase().includes(q)
+    s.area.toLowerCase().includes(q) ||
+    s.city.toLowerCase().includes(q)
   );
 
   if (filtered.length === 0) {
@@ -215,7 +240,7 @@ function handleExploreSearch(query) {
       <div class="bg-white p-6 rounded-2xl border border-slate-200 text-center text-slate-500 my-4 shadow-sm">
         <i class="fa-solid fa-magnifying-glass text-2xl text-slate-300 mb-2"></i>
         <h4 class="text-xs font-bold text-slate-800">Tidak ada spot parkir yang cocok</h4>
-        <p class="text-[11px] text-slate-400 mt-1">Coba kata kunci lain seperti "DP Mall", "Paragon", "The Park", atau "Ciputra".</p>
+        <p class="text-[11px] text-slate-400 mt-1">Coba kata kunci lain atau pilih kota lain melalui tombol kota di bagian atas.</p>
       </div>
     `;
     return;
@@ -841,55 +866,401 @@ function applyPromoCode() {
 }
 
 // Render Spots List in Explore & Home
-function renderSpotsList() {
+function renderSpotsList(cityFilter) {
   const exploreContainer = document.getElementById('explore-spots-list');
-  if (exploreContainer) {
-    exploreContainer.innerHTML = FindParkStore.spots.map(s => `
-      <div class="spot-list-card bg-white p-4 rounded-2xl border border-slate-200 hover:border-teal-400 hover:shadow-md transition cursor-pointer mb-3 ${
-        s.id === FindParkStore.currentBooking.spotId ? 'border-teal-500 ring-2 ring-teal-200' : ''
-      }" data-spot-id="${s.id}" onclick="selectSpotFromMap('${s.id}')">
-        <div class="flex gap-4">
-          <div class="relative w-28 h-24 rounded-xl overflow-hidden shrink-0 bg-slate-100">
-            <img src="${s.image}" alt="${s.name}" class="w-full h-full object-cover">
-            <span class="absolute bottom-1.5 left-1.5 bg-black/70 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded">
-              ${s.slotCode.split('-')[0]}
-            </span>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-start justify-between">
-              <div>
+  if (!exploreContainer) return;
+
+  const current = cityFilter || FindParkStore.currentCity || 'Semarang';
+  const isAll = current === 'Semua' || current === 'Seluruh Indonesia';
+
+  let list = isAll
+    ? FindParkStore.spots
+    : FindParkStore.spots.filter(s => s.city.toLowerCase() === current.toLowerCase());
+
+  if (list.length === 0) {
+    list = FindParkStore.spots;
+  }
+
+  exploreContainer.innerHTML = list.map(s => `
+    <div class="spot-list-card bg-white p-4 rounded-2xl border border-slate-200 hover:border-teal-400 hover:shadow-md transition cursor-pointer mb-3 ${
+      s.id === FindParkStore.currentBooking.spotId ? 'border-teal-500 ring-2 ring-teal-200 bg-teal-50/20' : ''
+    }" data-spot-id="${s.id}" onclick="selectSpotFromMap('${s.id}')">
+      <div class="flex gap-4">
+        <div class="relative w-28 h-24 rounded-xl overflow-hidden shrink-0 bg-slate-100">
+          <img src="${s.image}" alt="${s.name}" class="w-full h-full object-cover">
+          <span class="absolute bottom-1.5 left-1.5 bg-black/70 backdrop-blur text-white text-[10px] font-bold px-2 py-0.5 rounded">
+            ${s.slotCode.split('-')[0]}
+          </span>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="flex items-center gap-1.5">
                 <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded uppercase">
                   ${s.tagBadge}
                 </span>
-                <h4 class="font-bold text-slate-900 text-base mt-0.5">${s.name}</h4>
-                <p class="text-xs text-slate-500">${s.address}</p>
+                <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                  📍 ${s.city}
+                </span>
               </div>
-              <div class="flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-lg text-xs font-bold">
-                <i class="fa-solid fa-star text-amber-500 text-[10px]"></i>
-                <span>${s.rating}</span>
-              </div>
+              <h4 class="font-bold text-slate-900 text-base mt-0.5">${s.name}</h4>
+              <p class="text-xs text-slate-500">${s.address}</p>
             </div>
+            <div class="flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-lg text-xs font-bold">
+              <i class="fa-solid fa-star text-amber-500 text-[10px]"></i>
+              <span>${s.rating}</span>
+            </div>
+          </div>
 
-            <div class="flex items-center gap-3 text-xs text-slate-500 mt-2">
-              <span><i class="fa-regular fa-clock text-slate-400 mr-1"></i> ${s.openingHours}</span>
-              <span>•</span>
-              <span><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i> ${s.distance}</span>
-            </div>
+          <div class="flex items-center gap-3 text-xs text-slate-500 mt-2">
+            <span><i class="fa-regular fa-clock text-slate-400 mr-1"></i> ${s.openingHours}</span>
+            <span>•</span>
+            <span><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i> ${s.distance}</span>
+          </div>
 
-            <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100">
-              <div>
-                <span class="text-base font-extrabold text-slate-900">${formatRupiah(s.ratePerHour)}</span>
-                <span class="text-xs text-slate-500">/jam</span>
-                <span class="ml-2 text-xs font-bold text-teal-700">${s.availableSlots} Slot Kosong</span>
-              </div>
-              <button onclick="event.stopPropagation(); bookThisSpot('${s.id}')" class="px-3.5 py-1.5 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-xs font-bold rounded-lg transition shadow-sm">
-                Pesan Slot ${s.slotCode.split('-')[0]} &rarr;
-              </button>
+          <div class="flex items-center justify-between mt-3 pt-2 border-t border-slate-100">
+            <div>
+              <span class="text-base font-extrabold text-slate-900">${formatRupiah(s.ratePerHour)}</span>
+              <span class="text-xs text-slate-500">/jam</span>
+              <span class="ml-2 text-xs font-bold text-teal-700">${s.availableSlots} Slot Kosong</span>
             </div>
+            <button onclick="event.stopPropagation(); bookThisSpot('${s.id}')" class="px-3.5 py-1.5 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white text-xs font-bold rounded-lg transition shadow-sm cursor-pointer">
+              Pesan Slot ${s.slotCode.split('-')[0]} &rarr;
+            </button>
           </div>
         </div>
       </div>
-    `).join('');
+    </div>
+  `).join('');
+}
+
+// Render popular 4 cards on home page dynamically for chosen city or Indonesia
+function renderHomePopularCards(cityName) {
+  const container = document.getElementById('home-popular-cards-grid');
+  if (!container) return;
+
+  const current = cityName || FindParkStore.currentCity || 'Semarang';
+  const isAll = current === 'Semua' || current === 'Seluruh Indonesia';
+
+  let spots = isAll 
+    ? FindParkStore.spots 
+    : FindParkStore.spots.filter(s => s.city.toLowerCase() === current.toLowerCase());
+
+  if (spots.length === 0) {
+    spots = FindParkStore.spots.slice(0, 4);
+  } else {
+    spots = spots.slice(0, 4);
+  }
+
+  container.innerHTML = spots.map(s => `
+    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg transition group flex flex-col justify-between">
+      <div>
+        <div class="relative h-40 bg-slate-100 overflow-hidden">
+          <img src="${s.image}" alt="${s.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+          <span class="absolute top-2.5 left-2.5 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
+            ${s.availableSlots} Slot Kosong
+          </span>
+          <span class="absolute bottom-2.5 right-2.5 bg-black/60 backdrop-blur text-white text-[10px] font-semibold px-2 py-0.5 rounded">
+            📍 ${s.city}
+          </span>
+        </div>
+        <div class="p-4">
+          <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded uppercase">
+            ${s.tagBadge}
+          </span>
+          <h3 class="font-bold text-slate-900 text-base mt-1 line-clamp-1">${s.name}</h3>
+          <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">${s.address}</p>
+          <div class="mt-3 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-slate-400 block font-medium">Tarif Mulai</span>
+              <span class="text-base font-black text-slate-900">${formatRupiah(s.ratePerHour)}<span class="text-xs font-normal text-slate-500">/jam</span></span>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-teal-50 text-teal-700">Slot ${s.slotCode.split('-')[0]}</span>
+          </div>
+        </div>
+      </div>
+      <div class="px-4 pb-4">
+        <button onclick="bookThisSpot('${s.id}')" class="w-full py-2 bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold text-xs rounded-xl transition text-center shadow-xs cursor-pointer">
+          Pesan Cepat
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ==========================================
+// INDONESIA CITY SELECTION SYSTEM
+// ==========================================
+let currentRegionFilter = 'Semua';
+
+function openCityModal() {
+  const modal = document.getElementById('city-selector-modal');
+  if (!modal) return;
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  document.body.style.overflow = 'hidden';
+
+  const input = document.getElementById('city-search-input');
+  if (input) {
+    input.value = '';
+    setTimeout(() => input.focus(), 150);
+  }
+
+  currentRegionFilter = 'Semua';
+  renderCityRegionTabs();
+  renderCityModalCards('');
+}
+
+function closeCityModal() {
+  const modal = document.getElementById('city-selector-modal');
+  if (!modal) return;
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  document.body.style.overflow = '';
+}
+
+function setCityRegionFilter(region) {
+  currentRegionFilter = region;
+  renderCityRegionTabs();
+  const searchVal = document.getElementById('city-search-input')?.value || '';
+  renderCityModalCards(searchVal);
+}
+
+function handleCitySearchInput(query) {
+  renderCityModalCards(query);
+}
+
+function renderCityRegionTabs() {
+  const container = document.getElementById('city-region-tabs');
+  if (!container) return;
+
+  const regions = [
+    { id: 'Semua', label: 'Semua Kota' },
+    { id: 'Populer', label: '⭐ Kota Populer' },
+    { id: 'Jawa', label: 'Pulau Jawa' },
+    { id: 'Sumatera', label: 'Sumatera' },
+    { id: 'Bali & Nusa Tenggara', label: 'Bali & Nusra' },
+    { id: 'Kalimantan', label: 'Kalimantan' },
+    { id: 'Sulawesi', label: 'Sulawesi' },
+    { id: 'Maluku & Papua', label: 'Maluku & Papua' }
+  ];
+
+  container.innerHTML = regions.map(r => `
+    <button type="button" onclick="setCityRegionFilter('${r.id}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 cursor-pointer ${
+      currentRegionFilter === r.id 
+        ? 'bg-[#008874] text-white shadow-sm ring-2 ring-teal-200' 
+        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+    }">
+      ${r.label}
+    </button>
+  `).join('');
+}
+
+function renderCityModalCards(query = '') {
+  const container = document.getElementById('city-modal-cards-grid');
+  if (!container) return;
+
+  const q = (query || '').trim().toLowerCase();
+  let list = FindParkStore.cities;
+
+  // Region filter
+  if (currentRegionFilter === 'Populer') {
+    list = list.filter(c => c.popular);
+  } else if (currentRegionFilter !== 'Semua') {
+    list = list.filter(c => c.region === currentRegionFilter);
+  }
+
+  // Search filter
+  if (q) {
+    list = list.filter(c => 
+      c.name.toLowerCase().includes(q) || 
+      c.province.toLowerCase().includes(q) ||
+      c.region.toLowerCase().includes(q)
+    );
+  }
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full py-12 text-center text-slate-400">
+        <i class="fa-solid fa-map-location-dot text-4xl mb-3 text-slate-300"></i>
+        <p class="font-bold text-sm text-slate-700">Kota "${query}" belum tersedia di pencarian langsung</p>
+        <p class="text-xs text-slate-400 mt-1">Pilih kota terdekat atau pilih opsi "Seluruh Indonesia".</p>
+      </div>
+    `;
+    return;
+  }
+
+  const current = (FindParkStore.currentCity || '').toLowerCase();
+
+  // "Seluruh Indonesia" option when on 'Semua' and no query
+  let html = '';
+  if (currentRegionFilter === 'Semua' && !q) {
+    const isAllActive = current === 'semua' || current === 'seluruh indonesia';
+    html += `
+      <div onclick="setCity('Seluruh Indonesia')" class="p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between col-span-full ${
+        isAllActive 
+          ? 'bg-teal-50 border-teal-500 ring-2 ring-teal-200' 
+          : 'bg-gradient-to-r from-teal-50/60 via-white to-orange-50/60 border-slate-200 hover:border-teal-400 hover:shadow-sm'
+      }">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-xl font-bold shadow-xs shrink-0">
+            🇮🇩
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h4 class="font-black text-slate-900 text-sm">Seluruh Indonesia</h4>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">Nasional</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Akses semua mitra mall & gedung parkir di seluruh 38 provinsi</p>
+          </div>
+        </div>
+        <div>
+          ${isAllActive 
+            ? '<span class="text-xs font-bold text-teal-700 bg-teal-100 px-3 py-1 rounded-full"><i class="fa-solid fa-check mr-1"></i> Aktif</span>' 
+            : '<span class="text-xs font-bold text-teal-700 hover:underline">Jelajahi &rarr;</span>'
+          }
+        </div>
+      </div>
+    `;
+  }
+
+  html += list.map(city => {
+    const isSelected = current === city.name.toLowerCase();
+    const citySpots = FindParkStore.spots.filter(s => s.city.toLowerCase() === city.name.toLowerCase());
+    const countLabel = citySpots.length > 0 ? `${citySpots.length} Spot Terverifikasi` : `${city.spotsCount}+ Titik Mitra`;
+
+    return `
+      <div onclick="setCity('${city.name}')" class="p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between group ${
+        isSelected 
+          ? 'bg-teal-50/90 border-teal-500 ring-2 ring-teal-200 shadow-sm' 
+          : 'bg-white border-slate-200 hover:border-teal-400 hover:bg-slate-50 hover:shadow-xs'
+      }">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-teal-100/70 text-slate-700 group-hover:text-teal-700 flex items-center justify-center text-lg font-bold shrink-0 transition">
+            ${city.icon || '📍'}
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <h4 class="font-extrabold text-slate-900 text-sm truncate">${city.name}</h4>
+              ${city.popular ? '<span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800">Populer</span>' : ''}
+            </div>
+            <p class="text-[11px] text-slate-400 truncate">${city.province} • <span class="text-[#008874] font-semibold">${countLabel}</span></p>
+          </div>
+        </div>
+        <div class="shrink-0 ml-2">
+          ${isSelected 
+            ? '<span class="inline-flex items-center gap-1 text-[11px] font-bold text-teal-700 bg-teal-100/90 px-2.5 py-1 rounded-full"><i class="fa-solid fa-check text-[10px]"></i> Aktif</span>' 
+            : '<span class="text-xs font-bold text-slate-300 group-hover:text-[#008874] transition"><i class="fa-solid fa-chevron-right text-[10px]"></i></span>'
+          }
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = html;
+}
+
+// Master city switch handler
+function setCity(cityName, showNotification = true) {
+  if (!cityName) return;
+  FindParkStore.currentCity = cityName;
+
+  // 1. Update navbar button
+  const navCityLabel = document.getElementById('navbar-current-city');
+  if (navCityLabel) navCityLabel.textContent = cityName;
+
+  // 2. Update hero select dropdown
+  const heroCitySelect = document.getElementById('hero-search-city');
+  if (heroCitySelect) {
+    heroCitySelect.value = cityName;
+  }
+
+  // 3. Update Explore page filter button & headers
+  const exploreCityLabel = document.getElementById('explore-current-city-label');
+  if (exploreCityLabel) {
+    exploreCityLabel.textContent = cityName === 'Semua' || cityName === 'Seluruh Indonesia' ? 'Seluruh Indonesia' : `${cityName} Kota`;
+  }
+
+  const exploreHeading = document.getElementById('explore-spots-heading');
+  if (exploreHeading) {
+    exploreHeading.textContent = cityName === 'Semua' || cityName === 'Seluruh Indonesia' 
+      ? 'Spot Parkir Tersedia di Seluruh Indonesia' 
+      : `Spot Parkir Tersedia di ${cityName}`;
+  }
+
+  const exploreSearchInput = document.getElementById('explore-search-input');
+  if (exploreSearchInput) {
+    exploreSearchInput.placeholder = cityName === 'Semua' || cityName === 'Seluruh Indonesia'
+      ? 'Cari mall di seluruh Indonesia...' 
+      : `Cari mall di ${cityName}...`;
+  }
+
+  // 4. Update home section title
+  const homeTitle = document.getElementById('home-popular-city-title');
+  if (homeTitle) {
+    homeTitle.textContent = cityName === 'Semua' || cityName === 'Seluruh Indonesia'
+      ? 'Pilihan Slot Parkir Populer di Indonesia' 
+      : `Pilihan Slot Parkir Populer ${cityName}`;
+  }
+
+  // 5. Re-render Spots List for Explore & Home
+  renderSpotsList(cityName);
+  renderHomePopularCards(cityName);
+
+  // 6. Update Map Markers
+  if (typeof renderMapMarkers === 'function') {
+    renderMapMarkers(cityName);
+  }
+
+  // 7. Close Modal
+  closeCityModal();
+
+  // 8. Toast feedback
+  if (showNotification) {
+    const isAll = cityName === 'Semua' || cityName === 'Seluruh Indonesia';
+    const count = isAll ? FindParkStore.spots.length : FindParkStore.spots.filter(s => s.city.toLowerCase() === cityName.toLowerCase()).length;
+    showToast(`📍 Lokasi diubah ke ${isAll ? 'Seluruh Indonesia' : cityName} (${count > 0 ? count + ' spot siap booking' : 'Jaringan aktif'})`);
+  }
+}
+
+// GPS Geolocation auto-detect handler
+function useCurrentGpsLocation() {
+  showToast('🛰️ Mengakses GPS untuk mendeteksi lokasi kota Anda...');
+  
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        let closestCity = FindParkStore.cities[0];
+        let minDistance = Infinity;
+
+        FindParkStore.cities.forEach(city => {
+          const dLat = city.lat - latitude;
+          const dLng = city.lng - longitude;
+          const dist = Math.sqrt(dLat * dLat + dLng * dLng);
+          if (dist < minDistance) {
+            minDistance = dist;
+            closestCity = city;
+          }
+        });
+
+        setCity(closestCity.name);
+        showToast(`🎯 GPS Terdeteksi: Lokasi Anda di ${closestCity.name} (${closestCity.province})`);
+      },
+      () => {
+        // Fallback simulation
+        setTimeout(() => {
+          setCity('Semarang');
+          showToast('🎯 GPS Terdeteksi: Semarang Pusat (Akurasi ±15m)');
+        }, 500);
+      },
+      { timeout: 4000 }
+    );
+  } else {
+    setTimeout(() => {
+      setCity('Semarang');
+      showToast('🎯 GPS Terdeteksi: Semarang');
+    }, 500);
   }
 }
 

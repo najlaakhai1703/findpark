@@ -1,5 +1,61 @@
 // FindPark Shared Store & State Management
 const FindParkStore = {
+  // Current active city across website
+  currentCity: 'Semarang',
+
+  // Master Cities of Indonesia
+  cities: [
+    // Kota Populer / Major Hubs
+    { id: 'semarang', name: 'Semarang', province: 'Jawa Tengah', region: 'Jawa', lat: -6.9826, lng: 110.4150, zoom: 14, spotsCount: 48, popular: true, icon: '🏛️' },
+    { id: 'jakarta', name: 'Jakarta', province: 'DKI Jakarta', region: 'Jawa', lat: -6.1944, lng: 106.8229, zoom: 13, spotsCount: 185, popular: true, icon: '🏙️' },
+    { id: 'surabaya', name: 'Surabaya', province: 'Jawa Timur', region: 'Jawa', lat: -7.2625, lng: 112.7408, zoom: 13, spotsCount: 96, popular: true, icon: '🦈' },
+    { id: 'bandung', name: 'Bandung', province: 'Jawa Barat', region: 'Jawa', lat: -6.9025, lng: 107.6186, zoom: 14, spotsCount: 82, popular: true, icon: '☕' },
+    { id: 'yogyakarta', name: 'Yogyakarta', province: 'D.I. Yogyakarta', region: 'Jawa', lat: -7.7828, lng: 110.3705, zoom: 14, spotsCount: 54, popular: true, icon: '⛩️' },
+    { id: 'bali', name: 'Bali / Denpasar', province: 'Bali', region: 'Bali & Nusa Tenggara', lat: -8.6705, lng: 115.2126, zoom: 13, spotsCount: 78, popular: true, icon: '🌴' },
+    { id: 'medan', name: 'Medan', province: 'Sumatera Utara', region: 'Sumatera', lat: 3.5852, lng: 98.6756, zoom: 13, spotsCount: 65, popular: true, icon: '🌆' },
+    { id: 'makassar', name: 'Makassar', province: 'Sulawesi Selatan', region: 'Sulawesi', lat: -5.1477, lng: 119.4327, zoom: 13, spotsCount: 52, popular: true, icon: '⛵' },
+    { id: 'solo', name: 'Solo / Surakarta', province: 'Jawa Tengah', region: 'Jawa', lat: -7.5562, lng: 110.8250, zoom: 14, spotsCount: 38, popular: true, icon: '🎭' },
+    { id: 'malang', name: 'Malang', province: 'Jawa Timur', region: 'Jawa', lat: -7.9666, lng: 112.6326, zoom: 14, spotsCount: 42, popular: true, icon: '🍎' },
+    { id: 'palembang', name: 'Palembang', province: 'Sumatera Selatan', region: 'Sumatera', lat: -2.9761, lng: 104.7754, zoom: 13, spotsCount: 45, popular: true, icon: '🌉' },
+    { id: 'balikpapan', name: 'Balikpapan', province: 'Kalimantan Timur', region: 'Kalimantan', lat: -1.2654, lng: 116.8312, zoom: 13, spotsCount: 34, popular: true, icon: '🛢️' },
+    
+    // Pulau Jawa & Banten
+    { id: 'tangerang', name: 'Tangerang & Tangsel', province: 'Banten', region: 'Jawa', lat: -6.1783, lng: 106.6319, zoom: 13, spotsCount: 88, popular: false, icon: '🏬' },
+    { id: 'bekasi', name: 'Bekasi', province: 'Jawa Barat', region: 'Jawa', lat: -6.2383, lng: 106.9756, zoom: 13, spotsCount: 72, popular: false, icon: '🏢' },
+    { id: 'bogor', name: 'Bogor', province: 'Jawa Barat', region: 'Jawa', lat: -6.5971, lng: 106.8060, zoom: 14, spotsCount: 46, popular: false, icon: '🌧️' },
+    { id: 'depok', name: 'Depok', province: 'Jawa Barat', region: 'Jawa', lat: -6.4025, lng: 106.7942, zoom: 13, spotsCount: 40, popular: false, icon: '🎓' },
+    { id: 'cirebon', name: 'Cirebon', province: 'Jawa Barat', region: 'Jawa', lat: -6.7063, lng: 108.5570, zoom: 14, spotsCount: 22, popular: false, icon: '🦐' },
+    { id: 'serang', name: 'Serang', province: 'Banten', region: 'Jawa', lat: -6.1104, lng: 106.1640, zoom: 14, spotsCount: 18, popular: false, icon: '🏰' },
+
+    // Sumatera
+    { id: 'batam', name: 'Batam', province: 'Kepulauan Riau', region: 'Sumatera', lat: 1.1301, lng: 104.0529, zoom: 13, spotsCount: 38, popular: false, icon: '🚢' },
+    { id: 'pekanbaru', name: 'Pekanbaru', province: 'Riau', region: 'Sumatera', lat: 0.5071, lng: 101.4478, zoom: 13, spotsCount: 32, popular: false, icon: '🕌' },
+    { id: 'lampung', name: 'Bandar Lampung', province: 'Lampung', region: 'Sumatera', lat: -5.4500, lng: 105.2667, zoom: 13, spotsCount: 28, popular: false, icon: '🐘' },
+    { id: 'padang', name: 'Padang', province: 'Sumatera Barat', region: 'Sumatera', lat: -0.9471, lng: 100.4172, zoom: 13, spotsCount: 24, popular: false, icon: '🏠' },
+    { id: 'jambi', name: 'Jambi', province: 'Jambi', region: 'Sumatera', lat: -1.6101, lng: 103.6131, zoom: 13, spotsCount: 20, popular: false, icon: '🛶' },
+    { id: 'aceh', name: 'Banda Aceh', province: 'Aceh', region: 'Sumatera', lat: 5.5483, lng: 95.3238, zoom: 13, spotsCount: 18, popular: false, icon: '🕌' },
+
+    // Kalimantan
+    { id: 'samarinda', name: 'Samarinda', province: 'Kalimantan Timur', region: 'Kalimantan', lat: -0.5021, lng: 117.1537, zoom: 13, spotsCount: 30, popular: false, icon: '🏞️' },
+    { id: 'banjarmasin', name: 'Banjarmasin', province: 'Kalimantan Selatan', region: 'Kalimantan', lat: -3.3194, lng: 114.5908, zoom: 13, spotsCount: 26, popular: false, icon: '🛶' },
+    { id: 'pontianak', name: 'Pontianak', province: 'Kalimantan Barat', region: 'Kalimantan', lat: -0.0263, lng: 109.3425, zoom: 13, spotsCount: 22, popular: false, icon: '🌐' },
+    { id: 'ikn', name: 'IKN Nusantara', province: 'Kalimantan Timur', region: 'Kalimantan', lat: -0.9744, lng: 116.7039, zoom: 13, spotsCount: 15, popular: false, icon: '🦅' },
+
+    // Sulawesi
+    { id: 'manado', name: 'Manado', province: 'Sulawesi Utara', region: 'Sulawesi', lat: 1.4748, lng: 124.8428, zoom: 13, spotsCount: 25, popular: false, icon: '🤿' },
+    { id: 'kendari', name: 'Kendari', province: 'Sulawesi Tenggara', region: 'Sulawesi', lat: -3.9985, lng: 122.5126, zoom: 13, spotsCount: 16, popular: false, icon: '🏖️' },
+    { id: 'palu', name: 'Palu', province: 'Sulawesi Tengah', region: 'Sulawesi', lat: -0.9003, lng: 119.8780, zoom: 13, spotsCount: 14, popular: false, icon: '🌄' },
+
+    // Bali & Nusa Tenggara
+    { id: 'mataram', name: 'Mataram (Lombok)', province: 'Nusa Tenggara Barat', region: 'Bali & Nusa Tenggara', lat: -8.5833, lng: 116.1167, zoom: 13, spotsCount: 20, popular: false, icon: '🏝️' },
+    { id: 'kupang', name: 'Kupang', province: 'Nusa Tenggara Timur', region: 'Bali & Nusa Tenggara', lat: -10.1772, lng: 123.6070, zoom: 13, spotsCount: 16, popular: false, icon: '🌅' },
+
+    // Maluku & Papua
+    { id: 'ambon', name: 'Ambon', province: 'Maluku', region: 'Maluku & Papua', lat: -3.6547, lng: 128.1906, zoom: 13, spotsCount: 14, popular: false, icon: '🐚' },
+    { id: 'jayapura', name: 'Jayapura', province: 'Papua', region: 'Maluku & Papua', lat: -2.5337, lng: 140.7181, zoom: 13, spotsCount: 16, popular: false, icon: '🦜' },
+    { id: 'sorong', name: 'Sorong', province: 'Papua Barat Daya', region: 'Maluku & Papua', lat: -0.8762, lng: 131.2558, zoom: 13, spotsCount: 12, popular: false, icon: '🌊' }
+  ],
+
   // Current user info
   user: {
     name: 'Angelica Prameswari',
@@ -33,10 +89,15 @@ const FindParkStore = {
 
   activeVehiclePlate: 'B 1256 AY',
 
-  // Mall Parking spots
+  // Mall & Building Parking spots across Indonesia
   spots: [
+    // ==========================================
+    // SEMARANG
+    // ==========================================
     {
       id: 'dp-mall-g3',
+      city: 'Semarang',
+      province: 'Jawa Tengah',
       name: 'DP Mall Semarang – G3',
       shortName: 'DP Mall G3',
       address: 'Jl. Pemuda No.150, Sekayu, Semarang Tengah',
@@ -50,7 +111,7 @@ const FindParkStore = {
       reviewsCount: 342,
       totalSlots: 120,
       availableSlots: 42,
-      openingHours: 'Buka s/d 20:00 WIB',
+      openingHours: 'Buka s/d 22:00 WIB',
       distance: '600m (7 mnt)',
       vehicleType: 'Mobil',
       statusTag: '42 Slot Kosong',
@@ -62,6 +123,8 @@ const FindParkStore = {
     },
     {
       id: 'the-park-a34',
+      city: 'Semarang',
+      province: 'Jawa Tengah',
       name: 'The Park Mall – A34',
       shortName: 'The Park (38)',
       address: 'Jl. Madukoro Raya No.10, Tawangsari, Semarang Barat',
@@ -87,6 +150,8 @@ const FindParkStore = {
     },
     {
       id: 'mall-paragon-a5',
+      city: 'Semarang',
+      province: 'Jawa Tengah',
       name: 'Mall Paragon – A5',
       shortName: 'Paragon (55)',
       address: 'Jl. Pemuda No.118, Sekayu, Semarang Tengah',
@@ -112,6 +177,8 @@ const FindParkStore = {
     },
     {
       id: 'mall-ciputra-b14',
+      city: 'Semarang',
+      province: 'Jawa Tengah',
       name: 'Mall Ciputra – B14',
       shortName: 'Ciputra (15)',
       address: 'Kawasan Simpang Lima No.1, Pekunden, Semarang',
@@ -134,6 +201,556 @@ const FindParkStore = {
       badgeClass: 'bg-teal-700 text-white',
       syncGate: true,
       image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&auto=format&fit=crop&q=80'
+    },
+
+    // ==========================================
+    // JAKARTA (DKI Jakarta)
+    // ==========================================
+    {
+      id: 'grand-indonesia-w3',
+      city: 'Jakarta',
+      province: 'DKI Jakarta',
+      name: 'Grand Indonesia – West Mall P3',
+      shortName: 'GI West (86)',
+      address: 'Jl. M.H. Thamrin No.1, Menteng, Jakarta Pusat',
+      area: 'Bundaran HI',
+      subLocation: 'Parking Level P3, Kolom B12 (Akses Lobby Shinta)',
+      slotCode: 'W3-B12',
+      lat: -6.1955,
+      lng: 106.8211,
+      ratePerHour: 5000,
+      rating: 4.9,
+      reviewsCount: 1250,
+      totalSlots: 350,
+      availableSlots: 86,
+      openingHours: 'Buka 24 Jam',
+      distance: '500m (5 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '86 Slot Kosong',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'PREMIUM HUB • EV SUPERCHARGER',
+      badgeClass: 'bg-blue-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'central-park-b2',
+      city: 'Jakarta',
+      province: 'DKI Jakarta',
+      name: 'Central Park Mall – Basement 2',
+      shortName: 'CP Mall (64)',
+      address: 'Jl. Letjen S. Parman Kav.28, Tanjung Duren, Jakarta Barat',
+      area: 'Grogol Petamburan',
+      subLocation: 'Basement 2, Blok Hijau (Dekat Pintu Tribeca Park)',
+      slotCode: 'CP-B28',
+      lat: -6.1774,
+      lng: 106.7907,
+      ratePerHour: 5000,
+      rating: 4.8,
+      reviewsCount: 890,
+      totalSlots: 280,
+      availableSlots: 64,
+      openingHours: 'Buka s/d 23:00 WIB',
+      distance: '1.2 km (8 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '64 Slot Tersedia',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'ANPR Gate Otomatis',
+      badgeClass: 'bg-emerald-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'pim3-p2',
+      city: 'Jakarta',
+      province: 'DKI Jakarta',
+      name: 'Pondok Indah Mall 3 – P2',
+      shortName: 'PIM 3 (48)',
+      address: 'Jl. Metro Pondok Indah Kav. IV, Kebayoran Lama, Jaksel',
+      area: 'Pondok Indah',
+      subLocation: 'Lantai P2, Skywalk Area (Dekat Uniqlo)',
+      slotCode: 'P3-A10',
+      lat: -6.2657,
+      lng: 106.7838,
+      ratePerHour: 6000,
+      rating: 4.9,
+      reviewsCount: 740,
+      totalSlots: 220,
+      availableSlots: 48,
+      openingHours: 'Buka s/d 22:00 WIB',
+      distance: '2.5 km (15 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '48 Slot Kosong',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Sensor Slot 3D',
+      badgeClass: 'bg-purple-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'senayan-city-b1',
+      city: 'Jakarta',
+      province: 'DKI Jakarta',
+      name: 'Senayan City – Basement 1',
+      shortName: 'Senci (52)',
+      address: 'Jl. Asia Afrika Lot 19, Gelora, Tanah Abang, Jakpus',
+      area: 'Senayan GBK',
+      subLocation: 'B1 Area VIP South Lobby (Dekat Delicae)',
+      slotCode: 'SC-V08',
+      lat: -6.2272,
+      lng: 106.7975,
+      ratePerHour: 5000,
+      rating: 4.7,
+      reviewsCount: 610,
+      totalSlots: 190,
+      availableSlots: 52,
+      openingHours: 'Buka s/d 23:00 WIB',
+      distance: '3.1 km (18 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '52 Slot Tersedia',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Valet & Self Parking',
+      badgeClass: 'bg-amber-500 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'mkg3-p1',
+      city: 'Jakarta',
+      province: 'DKI Jakarta',
+      name: 'Mall Kelapa Gading 3 – P1',
+      shortName: 'MKG 3 (70)',
+      address: 'Jl. Boulevard Raya, Kelapa Gading, Jakarta Utara',
+      area: 'Kelapa Gading',
+      subLocation: 'Gedung Parkir 3 Lantai 1 (Dekat Gading Walk)',
+      slotCode: 'G3-104',
+      lat: -6.1578,
+      lng: 106.9085,
+      ratePerHour: 5000,
+      rating: 4.8,
+      reviewsCount: 820,
+      totalSlots: 300,
+      availableSlots: 70,
+      openingHours: 'Buka s/d 22:00 WIB',
+      distance: '4.0 km (20 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '70 Slot Tersedia',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Keluarga & Ramah Anak',
+      badgeClass: 'bg-teal-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&auto=format&fit=crop&q=80'
+    },
+
+    // ==========================================
+    // SURABAYA (Jawa Timur)
+    // ==========================================
+    {
+      id: 'tunjungan-plaza-6',
+      city: 'Surabaya',
+      province: 'Jawa Timur',
+      name: 'Tunjungan Plaza 6 – P4',
+      shortName: 'TP 6 (92)',
+      address: 'Jl. Embong Malang No.21-31, Kedungdoro, Tegalsari, Surabaya',
+      area: 'Tunjungan Pusat',
+      subLocation: 'Gedung TP 6 Lantai P4 (Koneksi Jembatan TP 5)',
+      slotCode: 'TP6-C18',
+      lat: -6.9826, // Fallback safe offset relative to surabaya
+      lat: -7.2625,
+      lng: 112.7388,
+      ratePerHour: 5000,
+      rating: 4.9,
+      reviewsCount: 980,
+      totalSlots: 320,
+      availableSlots: 92,
+      openingHours: 'Buka s/d 22:00 WIB',
+      distance: '800m (7 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '92 Slot Kosong',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'LOKASI UTAMA SURABAYA',
+      badgeClass: 'bg-orange-500 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'pakuwon-mall-suroboyo',
+      city: 'Surabaya',
+      province: 'Jawa Timur',
+      name: 'Pakuwon Mall Surabaya – B1',
+      shortName: 'Pakuwon (115)',
+      address: 'Jl. Mayjend Jonosewojo No.2, Babatan, Wiyung, Surabaya Barat',
+      area: 'Surabaya Barat',
+      subLocation: 'Basement 1, Sektor Biru (Lobby Grand Pakuwon)',
+      slotCode: 'PW-B14',
+      lat: -7.2892,
+      lng: 112.6756,
+      ratePerHour: 5000,
+      rating: 4.8,
+      reviewsCount: 1100,
+      totalSlots: 450,
+      availableSlots: 115,
+      openingHours: 'Buka 24 Jam',
+      distance: '2.1 km (12 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '115 Slot Tersedia',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Kapasitas Terbesar',
+      badgeClass: 'bg-blue-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'galaxy-mall-3',
+      city: 'Surabaya',
+      province: 'Jawa Timur',
+      name: 'Galaxy Mall 3 – Lantai 2',
+      shortName: 'Galaxy Mall (45)',
+      address: 'Jl. Dharmahusada Indah Timur No.35-37, Mulyorejo, Surabaya',
+      area: 'Surabaya Timur',
+      subLocation: 'Lantai 2, Jembatan Skybridge Dekat Cinema XXI',
+      slotCode: 'GM-A04',
+      lat: -7.2743,
+      lng: 112.7808,
+      ratePerHour: 4000,
+      rating: 4.7,
+      reviewsCount: 430,
+      totalSlots: 180,
+      availableSlots: 45,
+      openingHours: 'Buka s/d 22:00 WIB',
+      distance: '3.4 km (16 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '45 Slot Kosong',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Dekat Kampus UNAIR/ITS',
+      badgeClass: 'bg-teal-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=800&auto=format&fit=crop&q=80'
+    },
+
+    // ==========================================
+    // BANDUNG (Jawa Barat)
+    // ==========================================
+    {
+      id: 'pvj-sukajadi',
+      city: 'Bandung',
+      province: 'Jawa Barat',
+      name: 'Paris Van Java (PVJ) – Sky Level',
+      shortName: 'PVJ Bandung (58)',
+      address: 'Jl. Sukajadi No.131-139, Cipedes, Sukajadi, Bandung',
+      area: 'Sukajadi / Pasteur',
+      subLocation: 'Sky Level Rooftop Parking (Dekat Resort D’Botanica)',
+      slotCode: 'PVJ-R12',
+      lat: -6.8894,
+      lng: 107.5960,
+      ratePerHour: 5000,
+      rating: 4.8,
+      reviewsCount: 760,
+      totalSlots: 240,
+      availableSlots: 58,
+      openingHours: 'Buka s/d 22:00 WIB',
+      distance: '900m (8 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '58 Slot Kosong',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Open-Air Sejuk & Nyaman',
+      badgeClass: 'bg-emerald-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'paskal-23-bandung',
+      city: 'Bandung',
+      province: 'Jawa Barat',
+      name: '23 Paskal Shopping Center – P2',
+      shortName: '23 Paskal (74)',
+      address: 'Jl. Pasir Kaliki No.25-27, Kebon Jeruk, Andir, Bandung',
+      area: 'Pasir Kaliki',
+      subLocation: 'Gedung Parkir Selatan P2 (Akses Langsung Mall)',
+      slotCode: 'PK-202',
+      lat: -6.9157,
+      lng: 107.5962,
+      ratePerHour: 5000,
+      rating: 4.9,
+      reviewsCount: 910,
+      totalSlots: 260,
+      availableSlots: 74,
+      openingHours: 'Buka 24 Jam',
+      distance: '1.5 km (10 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '74 Slot Tersedia',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Kuliner & Pusat Belanja',
+      badgeClass: 'bg-amber-500 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'tsm-bandung',
+      city: 'Bandung',
+      province: 'Jawa Barat',
+      name: 'Trans Studio Mall Bandung – B1',
+      shortName: 'TSM Bandung (63)',
+      address: 'Jl. Gatot Subroto No.289, Cibangkong, Batununggal, Bandung',
+      area: 'Gatot Subroto',
+      subLocation: 'Basement 1, Area Ungu (Dekat Theme Park Entrance)',
+      slotCode: 'TSM-U15',
+      lat: -6.9262,
+      lng: 107.6366,
+      ratePerHour: 5000,
+      rating: 4.7,
+      reviewsCount: 650,
+      totalSlots: 210,
+      availableSlots: 63,
+      openingHours: 'Buka s/d 22:00 WIB',
+      distance: '2.8 km (14 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '63 Slot Tersedia',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Wahana Wisata Terintegrasi',
+      badgeClass: 'bg-blue-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&auto=format&fit=crop&q=80'
+    },
+
+    // ==========================================
+    // YOGYAKARTA (D.I. Yogyakarta)
+    // ==========================================
+    {
+      id: 'pakuwon-jogja',
+      city: 'Yogyakarta',
+      province: 'D.I. Yogyakarta',
+      name: 'Pakuwon Mall Jogja – P1',
+      shortName: 'Pakuwon Jogja (80)',
+      address: 'Jl. Ring Road Utara, Kaliwaru, Condongcatur, Sleman, DIY',
+      area: 'Ring Road Utara',
+      subLocation: 'Lantai P1, Area Lobby Barat (Dekat Marugame Udon)',
+      slotCode: 'PJ-108',
+      lat: -7.7593,
+      lng: 110.3995,
+      ratePerHour: 4000,
+      rating: 4.9,
+      reviewsCount: 790,
+      totalSlots: 300,
+      availableSlots: 80,
+      openingHours: 'Buka s/d 22:00 WIB',
+      distance: '1.1 km (9 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '80 Slot Kosong',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Mall Terbesar D.I. Yogyakarta',
+      badgeClass: 'bg-orange-500 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'plaza-ambarrukmo',
+      city: 'Yogyakarta',
+      province: 'D.I. Yogyakarta',
+      name: 'Plaza Ambarrukmo – B2',
+      shortName: 'Amplaz (52)',
+      address: 'Jl. Laksda Adisucipto No.80, Ambarukmo, Caturtunggal, Sleman',
+      area: 'Adisucipto',
+      subLocation: 'Basement 2, Kolom E-06 (Dekat Carrefour/Transmart)',
+      slotCode: 'PA-E06',
+      lat: -7.7828,
+      lng: 110.4013,
+      ratePerHour: 4000,
+      rating: 4.8,
+      reviewsCount: 880,
+      totalSlots: 200,
+      availableSlots: 52,
+      openingHours: 'Buka s/d 22:00 WIB',
+      distance: '1.9 km (11 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '52 Slot Tersedia',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Akses Cepat Bandara & Solo',
+      badgeClass: 'bg-teal-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=800&auto=format&fit=crop&q=80'
+    },
+
+    // ==========================================
+    // BALI / DENPASAR
+    // ==========================================
+    {
+      id: 'beachwalk-kuta',
+      city: 'Bali',
+      province: 'Bali',
+      name: 'Beachwalk Shopping Center – B1 Kuta',
+      shortName: 'Beachwalk (65)',
+      address: 'Jl. Pantai Kuta, Kuta, Kec. Kuta, Kabupaten Badung, Bali',
+      area: 'Pantai Kuta',
+      subLocation: 'Basement 1, Sunset Side (Dekat Oasis Stage)',
+      slotCode: 'BW-K14',
+      lat: -8.7175,
+      lng: 115.1691,
+      ratePerHour: 6000,
+      rating: 4.9,
+      reviewsCount: 1420,
+      totalSlots: 250,
+      availableSlots: 65,
+      openingHours: 'Buka s/d 23:00 WITA',
+      distance: '300m (3 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '65 Slot Kosong',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'WISATA PANTAI BALI TERPOPULER',
+      badgeClass: 'bg-blue-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'living-world-denpasar',
+      city: 'Bali',
+      province: 'Bali',
+      name: 'Living World Denpasar – P3',
+      shortName: 'LW Denpasar (90)',
+      address: 'Jl. Gatot Subroto Timur, Tonja, Kec. Denpasar Utara, Bali',
+      area: 'Gatot Subroto Denpasar',
+      subLocation: 'Lantai P3, Green Zone (Dekat Ace Hardware)',
+      slotCode: 'LW-P30',
+      lat: -8.6367,
+      lng: 115.2343,
+      ratePerHour: 5000,
+      rating: 4.8,
+      reviewsCount: 650,
+      totalSlots: 320,
+      availableSlots: 90,
+      openingHours: 'Buka s/d 22:00 WITA',
+      distance: '1.4 km (10 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '90 Slot Tersedia',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Eco-Friendly Smart Hub',
+      badgeClass: 'bg-emerald-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=800&auto=format&fit=crop&q=80'
+    },
+
+    // ==========================================
+    // MEDAN (Sumatera Utara)
+    // ==========================================
+    {
+      id: 'sun-plaza-medan',
+      city: 'Medan',
+      province: 'Sumatera Utara',
+      name: 'Sun Plaza Medan – LG',
+      shortName: 'Sun Plaza (72)',
+      address: 'Jl. KH. Zainul Arifin No.7, Madras Hulu, Kec. Medan Petisah',
+      area: 'Medan Petisah',
+      subLocation: 'Lantai LG, Sektor Depan (Dekat Sogo Dept Store)',
+      slotCode: 'SP-L10',
+      lat: 3.5835,
+      lng: 98.6713,
+      ratePerHour: 5000,
+      rating: 4.8,
+      reviewsCount: 840,
+      totalSlots: 260,
+      availableSlots: 72,
+      openingHours: 'Buka s/d 22:00 WIB',
+      distance: '650m (6 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '72 Slot Kosong',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Pusat Kota Medan',
+      badgeClass: 'bg-amber-500 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800&auto=format&fit=crop&q=80'
+    },
+
+    // ==========================================
+    // MAKASSAR (Sulawesi Selatan)
+    // ==========================================
+    {
+      id: 'tsm-makassar',
+      city: 'Makassar',
+      province: 'Sulawesi Selatan',
+      name: 'Trans Studio Mall Makassar – B1',
+      shortName: 'TSM Makassar (85)',
+      address: 'Jl. Metro Tanjung Bunga, Maccini Sombala, Tamalate, Makassar',
+      area: 'Tanjung Bunga',
+      subLocation: 'Basement 1, VIP West Wing (Dekat Pantai Losari)',
+      slotCode: 'TSM-M08',
+      lat: -5.1583,
+      lng: 119.3983,
+      ratePerHour: 5000,
+      rating: 4.8,
+      reviewsCount: 680,
+      totalSlots: 280,
+      availableSlots: 85,
+      openingHours: 'Buka s/d 22:00 WITA',
+      distance: '1.2 km (8 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '85 Slot Tersedia',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Pesisir Pantai Losari',
+      badgeClass: 'bg-blue-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800&auto=format&fit=crop&q=80'
+    },
+
+    // ==========================================
+    // SOLO / SURAKARTA
+    // ==========================================
+    {
+      id: 'solo-paragon',
+      city: 'Solo',
+      province: 'Jawa Tengah',
+      name: 'Solo Paragon Lifestyle Mall – P2',
+      shortName: 'Solo Paragon (62)',
+      address: 'Jl. Yosodipuro No.133, Mangkubumen, Banjarsari, Surakarta',
+      area: 'Banjarsari',
+      subLocation: 'Lantai P2 (Dekat Pintu Masuk XXI)',
+      slotCode: 'SP-204',
+      lat: -7.5615,
+      lng: 110.8095,
+      ratePerHour: 4000,
+      rating: 4.8,
+      reviewsCount: 510,
+      totalSlots: 200,
+      availableSlots: 62,
+      openingHours: 'Buka s/d 22:00 WIB',
+      distance: '700m (6 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '62 Slot Kosong',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Pusat Kota Solo',
+      badgeClass: 'bg-teal-600 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=800&auto=format&fit=crop&q=80'
+    },
+
+    // ==========================================
+    // BALIKPAPAN & IKN (Kalimantan Timur)
+    // ==========================================
+    {
+      id: 'pentacity-balikpapan',
+      city: 'Balikpapan',
+      province: 'Kalimantan Timur',
+      name: 'Pentacity Shopping Venue – P3 BSB',
+      shortName: 'Pentacity (55)',
+      address: 'Balikpapan Superblock, Jl. Jend. Sudirman No.47, Balikpapan',
+      area: 'Balikpapan Superblock',
+      subLocation: 'Lantai P3, Sea View Terrace Parking',
+      slotCode: 'PC-312',
+      lat: -1.2654,
+      lng: 116.8580,
+      ratePerHour: 5000,
+      rating: 4.8,
+      reviewsCount: 420,
+      totalSlots: 180,
+      availableSlots: 55,
+      openingHours: 'Buka s/d 22:00 WITA',
+      distance: '850m (7 mnt)',
+      vehicleType: 'Mobil',
+      statusTag: '55 Slot Tersedia',
+      statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      tagBadge: 'Pusat Bisnis Kalimantan Timur & Gerbang IKN',
+      badgeClass: 'bg-orange-500 text-white',
+      syncGate: true,
+      image: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80'
     }
   ],
 
@@ -178,8 +795,8 @@ const FindParkStore = {
     },
     {
       id: 'FPK-71042',
-      spotName: 'Pollux Mall Paragon – Slot A5',
-      slotCode: 'A5-08',
+      spotName: 'Grand Indonesia – West Mall P3',
+      slotCode: 'W3-B12',
       date: 'Rabu, 20 Mei 2025',
       timeSlot: '18:30 – 21:30 WIB (3 Jam)',
       vehiclePlate: 'B 1256 AY',
@@ -221,98 +838,108 @@ const FindParkStore = {
   subscriptionPlans: [
     {
       id: 'sub-all-mall',
-      name: 'All-Mall Semarang Pass',
-      badge: 'TERPOPULER',
+      name: 'All-Mall Indonesia Commuter Pass',
       price: 350000,
-      period: 'Bulan',
-      description: 'Akses parkir unlimited tanpa bayar berulang di seluruh mall rekanan FindPark di Semarang.',
-      mallsIncluded: ['DP Mall', 'Mall Paragon', 'The Park', 'Mall Ciputra'],
+      period: '/bulan',
+      badge: 'Paling Populer',
+      badgeColor: 'bg-orange-500',
+      description: 'Akses tanpa batas ke seluruh mitra mall & gedung di Indonesia',
       features: [
-        'Akses bebas keluar masuk gerbang via Auto-Pass plat nomor',
-        'Jaminan kuota slot khusus jam sibuk akhir pekan',
-        'Diskon 50% layanan Valet VIP',
-        'Notifikasi reminder slot terdekat via WhatsApp'
+        'Akses parkir tak terbatas di 48+ mitra Semarang & ratusan mall se-Indonesia',
+        'Reservasi slot VIP prioritas (Garansi Slot Tersedia)',
+        'Free 15 menit grace period setiap parkir',
+        'Auto gate opening via ANPR tanpa tap kartu/HP',
+        'Diskon 20% cuci mobil di mitra resmi'
       ],
-      isCurrent: true
+      isPopular: true
     },
     {
-      id: 'sub-dp-mall',
-      name: 'Dedicated Slot DP Mall G3',
-      badge: 'KHUSUS KANTOR',
+      id: 'sub-single-mall',
+      name: 'Single Mall Dedicated Pass',
       price: 250000,
-      period: 'Bulan',
-      description: 'Slot parkir pribadi yang selalu tertahan atas nama plat kendaraan Anda 24/7.',
-      mallsIncluded: ['DP Mall Semarang (Lantai G3)'],
+      period: '/bulan',
+      badge: 'Hemat Harian',
+      badgeColor: 'bg-teal-600',
+      description: 'Pilihan hemat untuk Anda yang rutin parkir di 1 mall favorit setiap hari',
       features: [
-        'Slot privat dengan plang nama plat Anda',
-        'Akses pintu masuk VIP Gate Timur langsung lift',
-        'Gratis 2x cuci mobil eksterior per bulan',
-        'Layanan bantuan darurat aki & ban prioritas'
+        'Khusus 1 Mall pilihan (DP Mall, Grand Indonesia, TP Surabaya, dll)',
+        'Slot khusus Dedicated Tenant/Member Area',
+        'Bebas parkir hingga 12 jam/hari',
+        'Laporan rekap bulanan otomatis'
       ],
-      isCurrent: false
+      isPopular: false
     },
     {
-      id: 'sub-ev-pass',
-      name: 'Eco EV Unlimited Charging',
-      badge: 'MOBIL LISTRIK',
+      id: 'sub-ev-unlimited',
+      name: 'EV Eco-Warrior + Free Charging',
       price: 450000,
-      period: 'Bulan',
-      description: 'Paket komplit parkir harian + gratis pengisian daya baterai mobil listrik (CCS2 & Type 2).',
-      mallsIncluded: ['Semua Stasiun EV Partner Semarang'],
+      period: '/bulan',
+      badge: 'Khusus Kendaraan Listrik',
+      badgeColor: 'bg-emerald-600',
+      description: 'Solusi lengkap untuk pengguna Mobil Listrik (Hyundai Ioniq, Wuling, BYD)',
       features: [
-        'Gratis kuota pengisian daya hingga 150 kWh/bulan',
-        'Prioritas antrean charging port via aplikasi',
-        'Free reservasi slot khusus EV',
-        'Laporan efisiensi energi & penghematan emisi'
+        'Parkir gratis di semua zona EV Charging Station FindPark',
+        'Gratis 100 kWh fast charging per bulan di semua EV Hub',
+        'Prioritas colokan Type 2 & CCS2 fast charger',
+        'Green Member digital badge'
       ],
-      isCurrent: false
+      isPopular: false
     }
   ],
 
-  // NEW MENU DATA: EV Charging Stations in Semarang
+  // NEW MENU DATA: EV Charging Stations
   evStations: [
     {
       id: 'ev-dp-mall',
       name: 'DP Mall Semarang EV Hub',
-      address: 'Lantai Dasar G3 (Area Pilar B12-B14)',
-      power: '22 kW - 50 kW (Fast Charging)',
-      connectors: [
-        { type: 'CCS2 (DC Fast)', status: 'Tersedia', class: 'text-emerald-600 bg-emerald-50' },
-        { type: 'CCS2 (DC Fast)', status: 'Tersedia', class: 'text-emerald-600 bg-emerald-50' },
-        { type: 'Type 2 (AC)', status: 'Digunakan (Hyundai Ioniq 5)', class: 'text-amber-600 bg-amber-50' },
-        { type: 'Type 2 (AC)', status: 'Tersedia', class: 'text-emerald-600 bg-emerald-50' }
-      ],
-      ratePerKwh: 2466,
-      openStatus: '24 Jam Buka'
+      address: 'Jl. Pemuda No.150 (Lantai Dasar Area Timur)',
+      availablePorts: 3,
+      totalPorts: 4,
+      powerKw: '60 kW Fast Charging',
+      connectorType: 'CCS2 & AC Type 2',
+      pricePerKwh: 2475,
+      status: 'Tersedia',
+      statusClass: 'bg-emerald-100 text-emerald-800',
+      image: 'https://images.unsplash.com/photo-1558441719-741e9766ee98?w=800&auto=format&fit=crop&q=80'
     },
     {
-      id: 'ev-the-park',
-      name: 'The Park Mall Supercharger',
-      address: 'Area Parkir Timur Dekat Starbuck',
-      power: '60 kW (Ultra Fast)',
-      connectors: [
-        { type: 'CCS2 60kW', status: 'Tersedia', class: 'text-emerald-600 bg-emerald-50' },
-        { type: 'CCS2 60kW', status: 'Tersedia', class: 'text-emerald-600 bg-emerald-50' }
-      ],
-      ratePerKwh: 2600,
-      openStatus: '10:00 – 22:00 WIB'
+      id: 'ev-gi-jakarta',
+      name: 'Grand Indonesia West Mall EV Superhub',
+      address: 'Jl. M.H. Thamrin No.1 (Basement P1 Zona Hijau)',
+      availablePorts: 6,
+      totalPorts: 8,
+      powerKw: '120 kW Ultra-Fast DC',
+      connectorType: 'CCS2 Dual Gun',
+      pricePerKwh: 2475,
+      status: 'Tersedia',
+      statusClass: 'bg-emerald-100 text-emerald-800',
+      image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&auto=format&fit=crop&q=80'
     },
     {
       id: 'ev-paragon',
       name: 'Pollux Mall Paragon EV Station',
-      address: 'Basement 1 Area VIP',
-      power: '22 kW (AC Fast)',
-      connectors: [
-        { type: 'Type 2 AC', status: 'Tersedia', class: 'text-emerald-600 bg-emerald-50' },
-        { type: 'Type 2 AC', status: 'Digunakan (Wuling Binguo)', class: 'text-amber-600 bg-amber-50' }
-      ],
-      ratePerKwh: 2466,
-      openStatus: '10:00 – 22:00 WIB'
+      address: 'Jl. Pemuda No.118 (Lantai P1 dekat Lobby)',
+      availablePorts: 1,
+      totalPorts: 2,
+      powerKw: '22 kW AC Medium',
+      connectorType: 'Type 2 Mennekes',
+      pricePerKwh: 2475,
+      status: 'Sisa 1 Port',
+      statusClass: 'bg-amber-100 text-amber-800',
+      image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&auto=format&fit=crop&q=80'
+    },
+    {
+      id: 'ev-tp-surabaya',
+      name: 'Tunjungan Plaza 6 Ultra EV Charger',
+      address: 'Jl. Embong Malang (Basement P2 Lobby Timur)',
+      availablePorts: 4,
+      totalPorts: 6,
+      powerKw: '100 kW Fast Charging DC',
+      connectorType: 'CCS2 & Chademo',
+      pricePerKwh: 2475,
+      status: 'Tersedia',
+      statusClass: 'bg-emerald-100 text-emerald-800',
+      image: 'https://images.unsplash.com/photo-1558441719-741e9766ee98?w=800&auto=format&fit=crop&q=80'
     }
   ]
 };
-
-// Format currency IDR
-function formatRupiah(amount) {
-  return 'Rp ' + Number(amount).toLocaleString('id-ID');
-}
