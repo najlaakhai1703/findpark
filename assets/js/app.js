@@ -993,6 +993,95 @@ function renderHomePopularCards(cityName) {
 // ==========================================
 let currentRegionFilter = 'Semua';
 
+// Navbar Direct Floating Dropdown Handler
+function toggleCityDropdown(e) {
+  if (e) e.stopPropagation();
+  const dropdown = document.getElementById('navbar-city-dropdown');
+  if (!dropdown) return;
+  const isHidden = dropdown.classList.contains('hidden');
+
+  if (isHidden) {
+    dropdown.classList.remove('hidden');
+    const searchInput = document.getElementById('navbar-city-dropdown-search');
+    if (searchInput) {
+      searchInput.value = '';
+      setTimeout(() => searchInput.focus(), 120);
+    }
+    filterNavbarCityDropdown('');
+  } else {
+    dropdown.classList.add('hidden');
+  }
+}
+
+function closeNavbarCityDropdown() {
+  const dropdown = document.getElementById('navbar-city-dropdown');
+  if (dropdown) dropdown.classList.add('hidden');
+}
+
+function filterNavbarCityDropdown(query) {
+  const q = (query || '').trim().toLowerCase();
+  const listEl = document.getElementById('navbar-city-dropdown-list');
+  if (!listEl) return;
+
+  const current = (FindParkStore.currentCity || '').toLowerCase();
+  let cities = FindParkStore.cities;
+
+  if (q) {
+    cities = cities.filter(c => 
+      c.name.toLowerCase().includes(q) || 
+      c.province.toLowerCase().includes(q)
+    );
+  }
+
+  if (cities.length === 0) {
+    listEl.innerHTML = `<div class="p-3 text-center text-xs text-slate-400">Kota "${query}" tidak ditemukan</div>`;
+    return;
+  }
+
+  let html = '';
+  if (!q) {
+    const isAll = current === 'semua' || current === 'seluruh indonesia';
+    html += `
+      <button type="button" onclick="setCity('Seluruh Indonesia'); closeNavbarCityDropdown();" class="w-full px-3 py-2 text-left rounded-xl text-xs font-bold transition flex items-center justify-between cursor-pointer ${
+        isAll ? 'bg-teal-50 text-[#008874] font-extrabold' : 'text-slate-700 hover:bg-slate-100'
+      }">
+        <span class="flex items-center gap-2">
+          <span>🇮🇩</span>
+          <span>Seluruh Indonesia (Semua Kota)</span>
+        </span>
+        ${isAll ? '<i class="fa-solid fa-check text-[#008874]"></i>' : ''}
+      </button>
+    `;
+  }
+
+  html += cities.map(c => {
+    const isSelected = current === c.name.toLowerCase();
+    return `
+      <button type="button" onclick="setCity('${c.name}'); closeNavbarCityDropdown();" class="w-full px-3 py-2 text-left rounded-xl text-xs font-bold transition flex items-center justify-between cursor-pointer ${
+        isSelected ? 'bg-teal-50 text-[#008874] font-extrabold' : 'text-slate-700 hover:bg-slate-100'
+      }">
+        <span class="flex items-center gap-2 truncate">
+          <span>${c.icon || '📍'}</span>
+          <span class="truncate">${c.name}</span>
+          <span class="text-[10px] font-normal text-slate-400 truncate">(${c.province})</span>
+        </span>
+        ${isSelected ? '<i class="fa-solid fa-check text-[#008874]"></i>' : ''}
+      </button>
+    `;
+  }).join('');
+
+  listEl.innerHTML = html;
+}
+
+// Global click listener to close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('navbar-city-dropdown');
+  const btn = document.getElementById('navbar-city-btn');
+  if (dropdown && !dropdown.contains(e.target) && !btn?.contains(e.target)) {
+    dropdown.classList.add('hidden');
+  }
+});
+
 function openCityModal() {
   const modal = document.getElementById('city-selector-modal');
   if (!modal) return;
@@ -1212,8 +1301,9 @@ function setCity(cityName, showNotification = true) {
     renderMapMarkers(cityName);
   }
 
-  // 7. Close Modal
+  // 7. Close Modal & Dropdown
   closeCityModal();
+  closeNavbarCityDropdown();
 
   // 8. Toast feedback
   if (showNotification) {

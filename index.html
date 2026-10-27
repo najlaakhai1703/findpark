@@ -48,12 +48,45 @@
             <img src="assets/images/logo-cropped.jpg" alt="FindPark - FAST TRACKER AREA" class="h-10 sm:h-11 w-auto object-contain group-hover:scale-105 transition" />
           </div>
 
-          <!-- City Selector Button (Indonesia Wide Modal) -->
-          <button id="navbar-city-btn" onclick="openCityModal()" type="button" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 active:scale-95 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 transition shrink-0 cursor-pointer shadow-xs group" title="Pilih Kota di Seluruh Indonesia">
-            <i class="fa-solid fa-location-dot text-[#008874] group-hover:animate-bounce"></i>
-            <span id="navbar-current-city">Semarang</span>
-            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-slate-600 transition"></i>
-          </button>
+          <!-- City Selector with Instant Dropdown & Modal -->
+          <div class="relative">
+            <button id="navbar-city-btn" onclick="toggleCityDropdown(event)" type="button" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 active:scale-95 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 transition shrink-0 cursor-pointer shadow-xs group" title="Klik untuk pilih kota di Indonesia">
+              <i class="fa-solid fa-location-dot text-[#008874] group-hover:animate-bounce"></i>
+              <span id="navbar-current-city">Semarang</span>
+              <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 group-hover:text-slate-600 transition"></i>
+            </button>
+
+            <!-- Direct Dropdown Menu right beneath button -->
+            <div id="navbar-city-dropdown" class="hidden absolute left-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 p-3 z-50 animate-fade-in">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
+                <span class="text-[11px] font-black uppercase tracking-wider text-[#008874] flex items-center gap-1.5">
+                  <i class="fa-solid fa-earth-asia"></i> Pilih Kota di Indonesia
+                </span>
+                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-700">34+ Kota</span>
+              </div>
+
+              <!-- Quick Search Input inside Dropdown -->
+              <div class="relative mb-2">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+                <input id="navbar-city-dropdown-search" type="text" placeholder="Ketik nama kota (Jakarta, Bali, dll)..." oninput="filterNavbarCityDropdown(this.value)" class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:border-[#008874] focus:bg-white transition" />
+              </div>
+
+              <!-- Scrollable City List -->
+              <div id="navbar-city-dropdown-list" class="max-h-64 overflow-y-auto space-y-0.5 pr-1 text-xs">
+                <!-- Rendered dynamically -->
+              </div>
+
+              <!-- Footer trigger to full modal -->
+              <div class="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                <button type="button" onclick="closeNavbarCityDropdown(); useCurrentGpsLocation();" class="text-[11px] font-bold text-[#008874] hover:underline flex items-center gap-1 cursor-pointer">
+                  <i class="fa-solid fa-crosshairs text-[10px]"></i> GPS Auto
+                </button>
+                <button type="button" onclick="closeNavbarCityDropdown(); openCityModal();" class="text-[11px] font-bold text-orange-600 hover:underline flex items-center gap-1 cursor-pointer">
+                  Buka Peta & Semua Kota &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
 
           <!-- Clean Search Bar -->
           <div class="relative w-44 sm:w-56 xl:w-64">
